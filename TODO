@@ -1,0 +1,64 @@
+Miniere e minatori:
+- Elenco di chi ha minato di più
+- Elenco di chi ha guadagnato di più
+- Andamendo dei minatori nel tempo (in quanti si spartivano il premio? quantità media di bitcoin? 2 curve nel tempo)
+- Pool di minatori (a cluster con grafo, pesati sulla base delle interezzioni)
+- Chi detiene più bitcoin ora? (ergo non li ha mai spesi)
+
+
+
+Indagine:
+- stella/grafo a partire dall'indirizzo
+- dati più indirizzi vedere i cammini in comune
+- 
+
+
+
+
+Miniere e Minatori (dettagliato):
+- Elenco di chi ha minato di più:
+	per ogni blocco prendiamo address_out dalla transazione[0] e ++ ad ogni transazione
+
+- Elenco di chi ha guadagnato di più:
+	come sopra + conversione (creiamo un dizionaro dal file tabellare preso su blockchain.info)
+
+- Chi detiene più bitcoin ora? (ergo non li ha mai spesi)
+
+- Andamendo dei minatori nel tempo (in quanti si spartivano il premio? quantità media di bitcoin? 2 curve nel tempo):
+	?
+
+- Pool di minatori (a cluster con grafo, pesati sulla base delle interezzioni)
+	?
+
+	
+- Media fee e statiche fee (es: tempo di attesa medio per range fee)
+
+
+
+
+
+#Da fare un branch
+
+
+Dati:
+
+Address: #Dei minatori
+{
+	hash,
+	miningCount,
+	tx_mining : [], #appare a destra,ma a sinistra non c'è nessuno
+	tx_payment : [], #appare a sinistra
+	tx_credit : [], #appare a destra
+	totBitCoinMined,
+	totDollarMined,
+	currentBitCoin, #current dollar è derivato 
+}
+
+Tx:
+{
+	id,
+	time,
+	fee, #input - output
+	addresses_sending : [(address, value)]
+	addresses_receving : [(address, value)]
+}
