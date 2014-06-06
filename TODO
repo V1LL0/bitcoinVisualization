@@ -59,6 +59,6 @@ Tx:
 	id,
 	time,
 	fee, #input - output
-	addresses_sending : [(address, value)]
-	addresses_receving : [(address, value)]
+	addressesValue_sending : [(address, value)]
+	addressesValue_receving : [(address, value)]
 }
