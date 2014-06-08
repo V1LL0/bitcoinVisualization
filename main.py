@@ -1,4 +1,3 @@
-
 #!/usr/bin/python
 
 import sys
@@ -39,11 +38,13 @@ for i in range(150000, 150000+max_block_num):
   try:
     tx_string = getTransactionString(block, 1)
     fileOut.write(tx_string)
-    print "TROVATOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!!!!!!!!!!!!!!!!!!!!!!!!"
   except Exception:
-    fileOut.write("- - - - - - - - - - - - - - - - - - - - - - - - \n")
+    print "Exception"
 
-  fileOut.write("___________________________________________________________________________________________________________\n")
+
+
+
+fileOut.close()
 
 '''
 
@@ -58,8 +59,3 @@ for(input in raw_tx['vin']) {
 }
 
 '''
-
-
-
-fileOut.close()
-

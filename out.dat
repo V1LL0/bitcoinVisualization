@@ -1,0 +1,20 @@
+{
+	hash : (u'15QYqct6uX2rBTiFHstHfMYZ54wsXsXUr9', 50.00247288)
+	miningCount : 1
+	tx_mining : ["{\n\tid : 44c574b70ec11537e125d000aa55dfefd27cc9b964554ff7ed10c35c1891fed0\n\ttime : 1322420310\n\tfee : 0\n\tvalue_in : 0\n\tvalue_out : 50.00247288\n\taddressesValue_receving : [(u'15QYqct6uX2rBTiFHstHfMYZ54wsXsXUr9', 50.00247288)]\n\taddressesValue_sending : []\n}"]
+	tx_payment : []
+	tx_credit : []
+	totBitCoinMined : 50.00247288
+	totDollarMined : 50.00247288
+	currentBitCoin : 50.00247288
+}
+{
+	hash : (u'14gEJovhLmCxr8XqxJqwKPwTqYJQd6jjga', 50.0175)
+	miningCount : 1
+	tx_mining : ["{\n\tid : 101e23cabef6aecb5a9d7a637909481bdae7004132d007d42e24a846602cdd30\n\ttime : 1322421888\n\tfee : 0\n\tvalue_in : 0\n\tvalue_out : 50.0175\n\taddressesValue_receving : [(u'14gEJovhLmCxr8XqxJqwKPwTqYJQd6jjga', 50.0175)]\n\taddressesValue_sending : []\n}"]
+	tx_payment : []
+	tx_credit : []
+	totBitCoinMined : 50.0175
+	totDollarMined : 50.0175
+	currentBitCoin : 50.0175
+}
