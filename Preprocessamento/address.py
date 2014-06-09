@@ -24,14 +24,17 @@ class Address:
 		self.addNewMining(tx)
 
 	def addNewPayment(self, tx):	
-		self.tx_payment.append(tx_obj)
-		self.currentBitCoin = self.currentBitCoin - tx['output']
+		print "addNewPayment"
+		self.tx_payment.append(tx)
+		self.currentBitCoin = self.currentBitCoin - tx.value_out
 
 	def addNewCredit(self, tx):	
-		self.tx_credit.append(tx_obj)
-		self.currentBitCoin = self.currentBitCoin + tx['input']
+		print "addNewCredit"
+		self.tx_credit.append(tx)
+		self.currentBitCoin = self.currentBitCoin + tx.value_in
 
 	def addNewMining(self, tx):
+		print "addNewMining"
 		self.miningCount += 1 
 		self.tx_mining.append(tx)
 

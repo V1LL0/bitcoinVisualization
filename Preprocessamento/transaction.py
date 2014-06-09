@@ -21,7 +21,7 @@ class Transaction:
 		try:
 			for vin in tx['vin']:
 				index = vin['vout']
-				tx_in = getJSONTransactionFromID(vin['txid'], index)
+				tx_in = getJSONTransactionFromID(vin['txid'])
 				prec_vout = tx_in['vout'][index]
 				for address in prec_vout['addresses']:
 					value_in = value_in + vout['value']
