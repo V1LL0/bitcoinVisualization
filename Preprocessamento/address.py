@@ -3,7 +3,9 @@
 from bitcoinConverter import BitcoinConverter
 
 def getStringFromTx(list):
-	return str([str(tx) for tx in list])
+	# return str([str(tx) for tx in list])
+	output = '-'.join(str(tx) for tx in list)
+	return "[ " + output + " ]"
 
 class Address:
 
@@ -11,15 +13,15 @@ class Address:
 		self.converter = converter
 
 		self.hash = address
-		self.miningCount = 1
-		self.tx_mining = [tx]
+		self.miningCount = 0
+		self.tx_mining = []
 		self.tx_payment = []
 		self.tx_credit = []
-		value = sum(elem[1] for elem in tx.addressesValue_receving)
-		self.totBitCoinMined = value
-		self.totDollarMined = self.converter.convertBitcoin(value, tx)
-		self.currentBitCoin = value
-
+		self.totBitCoinMined = 0
+		self.totDollarMined = 0
+		self.currentBitCoin = 0
+		self.totFees = 0
+		self.addNewMining(tx)
 
 	def addNewPayment(self, tx):	
 		self.tx_payment.append(tx_obj)
@@ -32,10 +34,25 @@ class Address:
 	def addNewMining(self, tx):
 		self.miningCount += 1 
 		self.tx_mining.append(tx)
+
+		fee = self.calculateFee(tx)
+		self.totFees = self.totFees + fee
+
 		value = sum(elem[1] for elem in tx.addressesValue_receving)
-		self.totBitCoinMined = self.totBitCoinMined + value
+		self.totBitCoinMined = self.totBitCoinMined + (value - fee)
 		self.totDollarMined = self.totDollarMined + self.converter.convertBitcoin(value, tx)
 		self.currentBitCoin = self.currentBitCoin + value
+
+	def calculateFee(self, tx):
+		if tx.value_in > 0:
+			return tx.value_in - tx.value_out
+		
+		profit = float(50)
+		while True:
+			fee = tx.value_out - profit
+			profit = profit / 2
+			if fee > 0:
+				return fee	
 
 	def __str__(self):
 		return "{" +  \
@@ -44,6 +61,7 @@ class Address:
 				"\n\t" + "tx_mining : " + getStringFromTx(self.tx_mining) + \
 				"\n\t" + "tx_payment : " + getStringFromTx(self.tx_payment) + \
 				"\n\t" + "tx_credit : " + getStringFromTx(self.tx_credit) + \
+				"\n\t" + "totFees : " + str(self.totFees) + \
 				"\n\t" + "totBitCoinMined : " + str(self.totBitCoinMined) + \
 				"\n\t" + "totDollarMined : " + str(self.totDollarMined) + \
 				"\n\t" + "currentBitCoin : " + str(self.currentBitCoin) + \
