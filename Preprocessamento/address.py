@@ -46,4 +46,5 @@ class Address:
 				"\n\t" + "currentBitCoin : " + str(self.currentBitCoin) + \
 				"\n}"
 
-
+	def __repr__(self):
+		return str(self)

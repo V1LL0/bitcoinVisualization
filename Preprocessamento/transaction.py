@@ -73,3 +73,6 @@ class Transaction:
 				"\n\t" + "addressesValue_receving : " + str(self.addressesValue_receving) + \
 				"\n\t" + "addressesValue_sending : " + str(self.addressesValue_sending) + \
 				"\n}"
+
+	def __repr__(self):
+		return str(self)

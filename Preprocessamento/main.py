@@ -1,46 +1,24 @@
 #!/usr/bin/python
 
 from bitcoindParser import BitcoinParser
+import time
 
-
-# def getJSONObjFromString(json_string):
-# 	return json.loads(json_string)
-
-# def callBashCommand(cmd_with_args):
-# 	return Popen(cmd_with_args, stdout=PIPE).communicate()[0]
-
-
+start_time = time.time()
 
 parser = BitcoinParser()
 start = 155000 
-maxBlockNum = 2
-parser.startParsing(start, maxBlockNum)
+maxBlockNum = 100
+try:
+	parser.startParsing(start, maxBlockNum)
+except ValueError:
+	print "Attendere qualche secondo prima di avviare."
+	print "Il Demone bitcoind potrebbe non essere ancora operativo"
 
 
-# for i in range(start, start+maxBlockNum):
-# 	block = getBlock(i)
-# 	tx = TX(block['tx'][0], block['time'])
+end = int(time.time() - start_time)
+end_sec = int(end%60)
+end_min = int(end/60)
+end_h = int(end_min/60)
 
-# 	#I miner vengono creati solo per la tx0
-# 	for address in tx['addresses_receving']:
-# 		if address in minersAddresses:
-# 			address.update(tx)
-# 		else:
-# 			address_obj = Address(address, tx)
-# 			parser.minersAddresses.append(address_obj)
-		
+print end_h, " hours ", end_min, " minutes ", end, " seconds "
 
-# 	#Le altre transazioni aggiungo informazioni
-# 	for tx_index in range(1, len(tx)):
-# 		tx = tx[tx_index]
-# 		tx_obj = TX(tx)
-		
-# 		parser.minersAddress = getAllMinerFromList(tx_obj[ 'addressesValue_sending'])  #filtrare la lista in python
-# 		if ( parser.minersAddress.size > 0):
-# 			for miner in self.minersAddress:
-# 				miner.addNewPayment(tx_obj)
-
-# 		parser.minersAddress = getAllMinerFromList(tx_obj['addressesValue_receving']) #filtrare la lista in python
-# 		if ( parser.minersAddress.size > 0):
-# 			for miner in parser.minersAddress:
-# 				miner.addNewCredit(tx_obj)
