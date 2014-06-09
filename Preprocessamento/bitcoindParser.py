@@ -59,8 +59,10 @@ class BitcoinParser:
 			#I miner vengono creati solo per la tx0
 			for address in tx.addressesValue_receving:
 				if address[0] in self.minersAddress:
+					print "Stesso minatore " + address[0]
 					address.addNewMining(tx)
 				else:
+					print "Minatore nuovo " + address[0]
 					address_obj = Address(address, tx)
 					self.minersAddress.append(address_obj)
 			
