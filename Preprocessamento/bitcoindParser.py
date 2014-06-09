@@ -5,45 +5,16 @@ import json
 import pprint
 
 from macro import *
-
 from transaction import Transaction
 from address import Address
+from bitcoinConverter import BitcoinConverter
 
-#Macro
-# def printObj(obj):
-# 	pprint.pprint(vars(obj))
-
-# def printJson(obj):
-# 	print json.dumps(obj, indent=4, sort_keys=True)
-
-# def getJSONObjFromString(json_string):
-# 	return json.loads(json_string)
-
-# def callBashCommand(cmd_with_args):
-# 	return Popen(cmd_with_args, stdout=PIPE).communicate()[0]
-
-# def getBlock(block_num):
-#   hash = callBashCommand([ "bitcoind", "getblockhash", str(block_num) ])
-#   block_string = callBashCommand([ "bitcoind", "getblock", hash ])
-#   return getJSONObjFromString(block_string)
-
-# def getTransactionString(block, num):
-#   tx_id = block['tx'][num]
-#   return getJSONTransactionFromID(tx_id)
-  
-
-# def getJSONTransactionFromID(txid):
-#   raw_tx = callBashCommand([ "bitcoind", "getrawtransaction", txid ])
-#   tx_string = callBashCommand([ "bitcoind", "decoderawtransaction", raw_tx[0:len(raw_tx)-1] ])
-#   return tx_string
-  
-# def getTransaction(block, num):
-#   return getJSONObjFromString( getTransactionString(block, num) )
 
 class BitcoinParser:
 
 	def __init__(self):
 		self.minersAddress = []
+		self.bitcoinToDollar = BitcoinConverter()
 
 	def getAllMinerFromList(self, addressesValue_sending):
 		outList = []
@@ -65,7 +36,7 @@ class BitcoinParser:
 					address.addNewMining(tx)
 				else:
 					print "Minatore nuovo " + address[0]
-					address_obj = Address(address, tx)
+					address_obj = Address(address, tx, self.bitcoinToDollar)
 					self.minersAddress.append(address_obj)
 			
 			

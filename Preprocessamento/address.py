@@ -1,11 +1,14 @@
 #! /user/bin/pyton
 
+from bitcoinConverter import BitcoinConverter
+
 def getStringFromTx(list):
 	return str([str(tx) for tx in list])
 
 class Address:
 
-	def __init__(self, address, tx):
+	def __init__(self, address, tx, converter):
+		self.converter = converter
 
 		self.hash = address
 		self.miningCount = 1
@@ -14,7 +17,7 @@ class Address:
 		self.tx_credit = []
 		value = sum(elem[1] for elem in tx.addressesValue_receving)
 		self.totBitCoinMined = value
-		self.totDollarMined = value
+		self.totDollarMined = self.converter.convertBitcoin(value, tx)
 		self.currentBitCoin = value
 
 
@@ -31,7 +34,7 @@ class Address:
 		self.tx_mining.append(tx)
 		value = sum(elem[1] for elem in tx.addressesValue_receving)
 		self.totBitCoinMined = self.totBitCoinMined + value
-		self.totDollarMined = self.totDollarMined + value
+		self.totDollarMined = self.totDollarMined + self.converter.convertBitcoin(value, tx)
 		self.currentBitCoin = self.currentBitCoin + value
 
 	def __str__(self):

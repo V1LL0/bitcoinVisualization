@@ -22,11 +22,6 @@ def getTransactionString(block, num):
   tx_id = block['tx'][num]
   return getJSONTransactionFromID(tx_id)
   
-
-# def getJSONTransactionFromID(txid):
-#   raw_tx = callBashCommand([ "bitcoind", "getrawtransaction", txid ])
-#   tx_string = callBashCommand([ "bitcoind", "decoderawtransaction", raw_tx[0:len(raw_tx)-1] ])
-#   return tx_string
 def getJSONTransactionFromID(txid):
   raw_tx = callBashCommand([ "bitcoind", "getrawtransaction", txid ])
   tx_string = callBashCommand([ "bitcoind", "decoderawtransaction", raw_tx[0:len(raw_tx)-1] ])

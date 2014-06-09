@@ -5,6 +5,6 @@
 	tx_payment : []
 	tx_credit : []
 	totBitCoinMined : 50.00247288
-	totDollarMined : 50.00247288
+	totDollarMined : 2.4965
 	currentBitCoin : 50.00247288
 }
