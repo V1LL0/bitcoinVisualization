@@ -1,24 +1,6 @@
 #! /user/bin/pyton
 
-from subprocess import *
-import json
-
-def printJson(obj):
-	print json.dumps(obj, indent=4, sort_keys=True)
-
-def getJSONObjFromString(json_string):
-	return json.loads(json_string)
-
-def callBashCommand(cmd_with_args):
-	return Popen(cmd_with_args, stdout=PIPE).communicate()[0]
-  
-def getJSONTransactionFromID(txid):
-  raw_tx = callBashCommand([ "bitcoind", "getrawtransaction", txid ])
-  tx_string = callBashCommand([ "bitcoind", "decoderawtransaction", raw_tx[0:len(raw_tx)-1] ])
-  return getJSONObjFromString( tx_string )
-
-def getTransaction(block, num):
-  return getJSONObjFromString( getTransactionString(block, num) )
+from macro import *
 
 class Transaction:
 

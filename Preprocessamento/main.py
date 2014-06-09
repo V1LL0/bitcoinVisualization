@@ -7,7 +7,7 @@ start_time = time.time()
 
 parser = BitcoinParser()
 start = 155000 
-maxBlockNum = 50
+maxBlockNum = 1
 try:
 	parser.startParsing(start, maxBlockNum)
 except ValueError:
