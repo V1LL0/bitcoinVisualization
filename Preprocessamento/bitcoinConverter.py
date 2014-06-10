@@ -1,7 +1,7 @@
 import csv
 import datetime
 
-
+import json
 
 class BitcoinConverter:
 
@@ -20,3 +20,8 @@ class BitcoinConverter:
 		return float(self.dictionary[date_string])
 		
 
+	def __str__(self):
+		return "{}"
+
+	# def __repr__(self):
+	# 	return str(json.dumps(self.__str__()))

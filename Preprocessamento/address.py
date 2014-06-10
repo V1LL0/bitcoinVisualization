@@ -1,4 +1,5 @@
 #! /user/bin/pyton
+import json
 
 from bitcoinConverter import BitcoinConverter
 
@@ -12,7 +13,7 @@ class Address:
 	def __init__(self, address, tx, converter):
 		self.converter = converter
 
-		self.hash = address
+		self._id = address
 		self.miningCount = 0
 		self.tx_mining = []
 		self.tx_payment = []
@@ -24,17 +25,17 @@ class Address:
 		self.addNewMining(tx)
 
 	def addNewPayment(self, tx):	
-		print "addNewPayment"
+		# print "addNewPayment"
 		self.tx_payment.append(tx)
 		self.currentBitCoin = self.currentBitCoin - tx.value_out
 
 	def addNewCredit(self, tx):	
-		print "addNewCredit"
+		# print "addNewCredit"
 		self.tx_credit.append(tx)
 		self.currentBitCoin = self.currentBitCoin + tx.value_in
 
 	def addNewMining(self, tx):
-		print "addNewMining"
+		# print "addNewMining"
 		self.miningCount += 1 
 		self.tx_mining.append(tx)
 
@@ -59,7 +60,7 @@ class Address:
 
 	def __str__(self):
 		return "{" +  \
-				"\n\t" + "hash : " + str(self.hash) +  \
+				"\n\t" + "hash : " + str(self._id) +  \
 				"\n\t" + "miningCount : " + str(self.miningCount) + \
 				"\n\t" + "tx_mining : " + getStringFromTx(self.tx_mining) + \
 				"\n\t" + "tx_payment : " + getStringFromTx(self.tx_payment) + \
@@ -70,5 +71,8 @@ class Address:
 				"\n\t" + "currentBitCoin : " + str(self.currentBitCoin) + \
 				"\n}"
 
-	def __repr__(self):
-		return str(self)
+	# def __repr__(self):
+	# 	return str(self)
+
+	def to_JSON(self):
+		return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)

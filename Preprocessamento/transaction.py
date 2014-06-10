@@ -33,7 +33,7 @@ class Transaction:
 
 
 		#Creazione effettiva dell'oggetto
-		self.id = txid
+		self._id = txid
 		self.time = time_block
 		self.value_in = value_in
 		self.value_out = value_out
@@ -44,7 +44,7 @@ class Transaction:
 
 	def __str__(self):
 		return "{" +  \
-				"\n\t" + "id : " + self.id +  \
+				"\n\t" + "id : " + self._id +  \
 				"\n\t" + "time : " + str(self.time) + \
 				"\n\t" + "value_in : " + str(self.value_in) + \
 				"\n\t" + "value_out : " + str(self.value_out) + \
@@ -52,5 +52,5 @@ class Transaction:
 				"\n\t" + "addressesValue_sending : " + str(self.addressesValue_sending) + \
 				"\n}"
 
-	def __repr__(self):
-		return str(self)
+	# def __repr__(self):
+	# 	return str(self)
