@@ -1,4 +1,5 @@
 from subprocess import *
+import pprint
 import json
 
 def printObj(obj):
@@ -6,6 +7,9 @@ def printObj(obj):
 
 def printJson(obj):
 	print json.dumps(obj, indent=4, sort_keys=True)
+
+def getJson(obj):
+  return json.dumps(obj, indent=4, sort_keys=True)
 
 def getJSONObjFromString(json_string):
 	return json.loads(json_string)

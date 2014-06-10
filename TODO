@@ -6,15 +6,6 @@ Miniere e minatori:
 - Chi detiene più bitcoin ora? (ergo non li ha mai spesi)
 
 
-
-Indagine:
-- stella/grafo a partire dall'indirizzo
-- dati più indirizzi vedere i cammini in comune
-- 
-
-
-
-
 Miniere e Minatori (dettagliato):
 - Elenco di chi ha minato di più:
 	per ogni blocco prendiamo address_out dalla transazione[0] e ++ ad ogni transazione
@@ -36,8 +27,6 @@ Miniere e Minatori (dettagliato):
 
 
 
-
-#Da fare un branch
 
 
 Dati:

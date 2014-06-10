@@ -8,6 +8,32 @@ from macro import *
 from transaction import Transaction
 from address import Address
 from bitcoinConverter import BitcoinConverter
+from dao import Dao
+
+
+def bestMinerComparator():
+	def compare(x,y):
+		if x.miningCount < y.miningCount:
+			return -1
+		elif x.miningCount < y.miningCount:
+			return 1
+		else:
+			return 0
+	def compare(x,y):
+		return int(x.miningCount - y.miningCount)
+	return compare
+
+def bestEarnerMinerComparator():
+	# def compare(x,y):
+	# 	if x.totDollarMined < y.totDollarMined:
+	# 		return -1
+	# 	elif x.totDollarMined < y.totDollarMined:
+	# 		return 1
+	# 	else:
+	# 		return 0
+	def compare(x,y):
+		return int(x.totDollarMined - y.totDollarMined)
+	return compare
 
 
 class BitcoinParser:
@@ -16,6 +42,7 @@ class BitcoinParser:
 		self.minersAddress = []
 		self.minersAddress_obj = {}
 		self.bitcoinToDollar = BitcoinConverter()
+		#self.dao = Dao()
 
 	def getAllMinerFromList(self, addressesValue_sending):
 		outList = []
@@ -29,6 +56,7 @@ class BitcoinParser:
 		for i in range(start, start+maxBlockNum):
  			block = getBlock(i)
 			tx = Transaction(block['tx'][0], block['time'])
+			printObj(tx)
 
 			#I miner vengono creati solo per la tx0
 			for address in tx.addressesValue_receving:
@@ -38,8 +66,9 @@ class BitcoinParser:
 					address_obj.addNewMining(tx)
 				else:
 					#print "Minatore nuovo " + address[0]
-					address_obj = Address(address, tx, self.bitcoinToDollar)
+					address_obj = Address(str(address[0]), tx, self.bitcoinToDollar)
 					self.minersAddress.append(address[0])
+					#self.save(address_obj)
 					self.minersAddress_obj[address[0]] = (address_obj)
 			
 			
@@ -59,15 +88,46 @@ class BitcoinParser:
 					for miner in miners:
 						address_obj = self.minersAddress_obj[miner]
 						address_obj.addNewCredit(tx_obj)
-		self.save()
-	#Metodo di salvataggio su file pre-db
+		#self.saveMiners()
+		self.saveFile("bestMiners", self.getBestMiner())
+		self.saveFile("bestEarner", self.getBestEarner())
 
-	def save(self):
-		# print self.minersAddress_obj
-		# print
-		# print self.minersAddress
+	def saveMiners(self):
 	 	fileOut = open("out.dat", "w")
 		for miner,value in self.minersAddress_obj.items():
 			fileOut.write(miner + " : " + str(value) + "\n")
 		fileOut.close()
+
+	def getBestMiner(self):		
+		miners = self.minersAddress_obj.values() 
+		miners_sorted = sorted(miners, cmp=bestMinerComparator(), reverse=True)
+
+		out = {}
+		for miner in miners_sorted:
+			out[miner._id] = miner.miningCount
+		return out
+
+	def getBestEarner(self):		
+		miners = self.minersAddress_obj.values() 
+		miners_sorted = sorted(miners, cmp=bestEarnerMinerComparator(), reverse=True)
+
+		out = {}
+		for miner in miners_sorted:
+			out[miner._id] = str(miner.totDollarMined) + "$"
+		return out
+	
+	def saveFile(self, fileName, dic):
+		fileOut = open(fileName, "w")
+		for miner,value in dic.items():
+			fileOut.write(str(miner) +  " : " + str(value) + "\n")
+		fileOut.close()
+
+	# def getAllValues(dic):
+	# 	list = []
+	# 	for key,value in dic.items():
+	# 		list.append(value)
+	# 	return list
+
+	# def save(self, address):
+	# 	self.dao.insertAddress(address)
 
