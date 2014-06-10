@@ -42,7 +42,7 @@ class BitcoinParser:
 		self.minersAddress = []
 		self.minersAddress_obj = {}
 		self.bitcoinToDollar = BitcoinConverter()
-		#self.dao = Dao()
+		self.dao = Dao()
 
 	def getAllMinerFromList(self, addressesValue_sending):
 		outList = []
@@ -64,11 +64,12 @@ class BitcoinParser:
 					#print "Stesso minatore " + address[0]
 					address_obj = self.minersAddress_obj[address[0]]
 					address_obj.addNewMining(tx)
+					self.save(address_obj)
 				else:
 					#print "Minatore nuovo " + address[0]
 					address_obj = Address(str(address[0]), tx, self.bitcoinToDollar)
 					self.minersAddress.append(address[0])
-					#self.save(address_obj)
+					self.save(address_obj)
 					self.minersAddress_obj[address[0]] = (address_obj)
 			
 			
@@ -128,6 +129,6 @@ class BitcoinParser:
 	# 		list.append(value)
 	# 	return list
 
-	# def save(self, address):
-	# 	self.dao.insertAddress(address)
+	def save(self, address):
+	 	self.dao.insertAddress(address)
 

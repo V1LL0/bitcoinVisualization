@@ -8,7 +8,7 @@ class BitcoinConverter:
 	dictionary = {}
 
 	def __init__(self):
-		with open('Preprocessamento/bitcoin2dollar.csv', 'rb') as csvfile:
+		with open('bitcoin2dollar.csv', 'rb') as csvfile:
 			reader = csv.reader(csvfile, delimiter=',')
 			for row in reader:
 				self.dictionary[row[0][0:10]] = row[1] #Prendo solo giorno/mese/anno
