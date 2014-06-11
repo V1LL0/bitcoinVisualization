@@ -34,6 +34,7 @@ class Transaction:
 
 		#Creazione effettiva dell'oggetto
 		self._id = txid
+		#self.txid = txid
 		self.time = time_block
 		self.value_in = value_in
 		self.value_out = value_out

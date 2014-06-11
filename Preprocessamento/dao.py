@@ -4,6 +4,7 @@ from pymongo import *
 import json
 from bson.json_util import dumps
 import bson.json_util as json_util
+from bson import ObjectId
 from macro import *
 from address import Address
 from transaction import Transaction
@@ -26,7 +27,7 @@ class Dao:
 		self.db.addresses.find_one({"hash" : address_hash})
 
 	def addressesCount(self):
-		return db.addresses.count
+		return self.db.addresses.count
 
 
 
@@ -35,6 +36,11 @@ class Dao:
 
 
 	def encode_address(self, address):
+
+		def default(self, o):
+			if isinstance(o, ObjectId):
+				return str(o)
+
 
 		txMining = []
 		print ("Addressaaaa: "+str(type(address)))
@@ -51,7 +57,7 @@ class Dao:
 		for txC in address.tx_credit:
 			txCredit.append(self.encode_transaction(txC))
 
-		return {"_type" : "address", "hash" : address.hash, "miningCount" : address.miningCount, "tx_mining" : txMining,
+		return {"_type" : "address", "_id" : address._id, "miningCount" : address.miningCount, "tx_mining" : txMining,
 				"tx_payment" : txPayement, "tx_credit" : txCredit, "totBitCoinMined" : address.totBitCoinMined,
 				"totDollarMined" : address.totDollarMined, "currentBitCoin" : address.currentBitCoin, "totFees" : address.totFees}
 
@@ -65,15 +71,17 @@ class Dao:
 
 	def encode_transaction(self, transaction):
 
+		def default(self, o):
+			if isinstance(o, ObjectId):
+				return str(o)
+
 		addressesValueReceving=[]
 		for avR in transaction.addressesValue_receving:
-			avR=Address(avR[0])
-			addressesValueReceving.append(self.encode_address(avR))
+			addressesValueReceving.append(avR)
 
 		addressesValueSending=[]
 		for avS in transaction.addressesValue_sending:
-			avS=Address(avS[0])
-			addressesValueSending.append(self.encode_address(avS))
+			addressesValueSending.append(avS)
 
 		return {"_type" : "transaction", "_id" : transaction._id, "time" : transaction.time, "value_in" : transaction.value_in,
 				"value_out" : transaction.value_out, "addressesValue_receving" : addressesValueReceving,

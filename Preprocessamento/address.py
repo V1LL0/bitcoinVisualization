@@ -10,11 +10,12 @@ def getStringFromTx(list):
 
 class Address:
 
+
 	def __init__(self, address, tx, converter):
 		self.converter = converter
 
-		#self._id = address
-		self.hash = address
+		self._id = address
+		#self.hash = address
 		self.miningCount = 0
 		self.tx_mining = []
 		self.tx_payment = []

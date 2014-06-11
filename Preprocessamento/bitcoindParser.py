@@ -12,6 +12,7 @@ from dao import Dao
 
 
 def bestMinerComparator():
+	'''
 	def compare(x,y):
 		if x.miningCount < y.miningCount:
 			return -1
@@ -19,6 +20,7 @@ def bestMinerComparator():
 			return 1
 		else:
 			return 0
+	'''
 	def compare(x,y):
 		return int(x.miningCount - y.miningCount)
 	return compare
