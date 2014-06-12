@@ -11,7 +11,7 @@ def getStringFromTx(list):
 class Address:
 
 
-	def __init__(self, address, tx, converter):
+	def __init__(self, address, converter):
 		self.converter = converter
 
 		self._id = address
@@ -24,7 +24,7 @@ class Address:
 		self.totDollarMined = 0
 		self.currentBitCoin = 0
 		self.totFees = 0
-		self.addNewMining(tx)
+		
 
 	def addNewPayment(self, tx):	
 		# print "addNewPayment"
