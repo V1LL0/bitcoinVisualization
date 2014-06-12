@@ -28,7 +28,7 @@ class BitcoinParser:
 		self.minersAddress = []
 		self.minersAddress_obj = {}
 		self.bitcoinToDollar = BitcoinConverter()
-		self.dao = Dao(bitcoinToDollar)
+		self.dao = Dao(self.bitcoinToDollar)
 
 	def getAllMinerFromList(self, addressesValue_sending):
 		outList = []
@@ -40,9 +40,10 @@ class BitcoinParser:
 	def startParsing(self, start, maxBlockNum):
 
 		for i in range(start, start+maxBlockNum):
+			print str(i-start+1) + "/" + str(maxBlockNum)
+
  			block = getBlock(i)
 			tx = Transaction(block['tx'][0], block['time'])
-			printObj(tx)
 
 			#I miner vengono creati solo per la tx0
 			for address in tx.addressesValue_receving:
@@ -50,13 +51,13 @@ class BitcoinParser:
 					print "Stesso minatore " + address[0]
 					address_obj = self.dao.getAddress(address[0])
 					address_obj.addNewMining(tx)
-					self.dao.updateAddress(address_obj)
+					self.dao.updateAddress(address_obj, tx)
 				else:
 					print "Minatore nuovo " + address[0]
 					address_obj = Address(str(address[0]), self.bitcoinToDollar)
 					address_obj.addNewMining(tx)
 					self.minersAddress.append(address[0])
-					self.dao.insertAddress(address)
+					self.dao.insertAddress(address_obj, tx)
 			
 			
 			#Le altre transazioni aggiungo informazioni
@@ -69,14 +70,18 @@ class BitcoinParser:
 					for miner in miners:
 						address_obj = self.dao.getAddress(miner)
 						address_obj.addNewPayment(tx_obj)
+						self.dao.updateAddress(address_obj, tx)
+
 
 				miners = self.getAllMinerFromList(tx_obj.addressesValue_receving) #filtrare la lista in python
 				if ( len(miners) > 0):
 					for miner in miners:
 						address_obj = self.dao.getAddress(miner)
 						address_obj.addNewCredit(tx_obj)
+						self.dao.updateAddress(address_obj, tx)
 
-						
+
+
 		#self.saveMiners()
 		# self.saveFile("bestMiners", self.getBestMiner())
 		# self.saveFile("bestEarner", self.getBestEarner())

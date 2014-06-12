@@ -14,26 +14,31 @@ class Dao:
 
 	def __init__(self, converter):
 		self.client = MongoClient()
-		self.db = self.client['bitcoinDB']
 		self.converter = converter
+		self.db = self.client['bitcoinDB']
 
-	def insertAddress(self, address):
-		res = self.db.addresses.insert(self.encode_address(address))
-		printJson(res)
+		#	DA TOGLIERE A FINE TEST
+		self.dropDB()
+		self.db = self.client['bitcoinDB']
+
+	def insertAddress(self, address, tx):
+		self.db.addresses.insert(self.encode_address(address))
+		self.db.transactions.insert(self.encode_transaction(tx))
 
 	def getAddress(self, address_hash):
-		self.db.addresses.find_one({"_id" : address_hash})
+		#return self.db.addresses.find_one({"_id" : address_hash})
+		return self.decode_address( self.db.addresses.find({"_id" : address_hash})[0] )
 
-	def updateAddress(self, address):
-		self.db.addresses.update({"_id" : address._id}, address )
+	def updateAddress(self, address, tx):
+		self.db.addresses.update({"_id" : address._id}, address)
+		self.db.transactions.insert(self.encode_transaction(tx))
 
 	def addressesCount(self):
 		return self.db.addresses.count
 
 
-
-
-
+	def dropDB(self):
+		self.db._command({'dropDatabase' : 1})
 
 
 	def encode_address(self, address):
@@ -76,22 +81,22 @@ class Dao:
 
 	def decode_address(self, document):
 		assert document["_type"] == "address"
-		address = Address(document._id, self.converter)
-		address.miningCount = document.miningCount
+		address = Address(document['_id'], self.converter)
+		address.miningCount = document["miningCount"]
 		
-		for tx in document.tx_mining:
+		for tx in document['tx_mining']:
 			address.tx_mining.append(decode_transaction(tx))
 
-		for tx in document.tx_payment:
+		for tx in document['tx_payment']:
 			address.tx_payment.append(decode_transaction(tx))
 	
-		for tx in document.tx_credit:
+		for tx in document['tx_credit']:
 			address.tx_credit.append(decode_transaction(tx))
 	
-		address.totBitCoinMined = document.totBitCoinMined
-		address.totDollarMined = document.totDollarMined
-		address.currentBitCoin = document.currentBitCoin
-		address.totFees = document.totFees
+		address.totBitCoinMined = document['totBitCoinMined']
+		address.totDollarMined = document['totDollarMined']
+		address.currentBitCoin = document['currentBitCoin']
+		address.totFees = document['totFees']
 
 		return address
 
@@ -120,11 +125,11 @@ class Dao:
 
 	def decode_transaction(self, document):
 		assert document["_type"] == "transaction"
-		transaction = Transaction(document._id, document.time)
-		transaction.value_in = document.value_in
-		transaction.value_out = document.value_out
-		transaction.addressesValue_receving = document.addressesValue_receving
-		transaction.addressesValue_sending = document.addressesValue_sending
+		transaction = Transaction(document['_id'], document["time"])
+		transaction.value_in = document['value_in']
+		transaction.value_out = document['value_out']
+		transaction.addressesValue_receving = document['addressesValue_receving']
+		transaction.addressesValue_sending = document['addressesValue_sending']
 
 		return transaction
 
