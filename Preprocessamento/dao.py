@@ -18,8 +18,8 @@ class Dao:
 		self.db = self.client['bitcoinDB']
 
 		#	DA TOGLIERE A FINE TEST
-		self.dropDB()
-		self.db = self.client['bitcoinDB']
+		# self.dropDB()
+		# self.db = self.client['bitcoinDB']
 
 	def insertAddress(self, address, tx):
 		self.db.addresses.insert(self.encode_address(address))
