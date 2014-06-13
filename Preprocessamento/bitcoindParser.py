@@ -70,7 +70,7 @@ class BitcoinParser:
 					for miner in miners:
 						address_obj = self.dao.getAddress(miner)
 						address_obj.addNewPayment(tx_obj)
-						self.dao.updateAddress(address_obj, tx)
+						self.dao.updateAddress(address_obj, tx_obj)
 
 
 				miners = self.getAllMinerFromList(tx_obj.addressesValue_receving) #filtrare la lista in python
@@ -78,7 +78,7 @@ class BitcoinParser:
 					for miner in miners:
 						address_obj = self.dao.getAddress(miner)
 						address_obj.addNewCredit(tx_obj)
-						self.dao.updateAddress(address_obj, tx)
+						self.dao.updateAddress(address_obj, tx_obj)
 
 
 

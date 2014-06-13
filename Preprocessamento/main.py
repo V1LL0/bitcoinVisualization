@@ -34,15 +34,15 @@ parser = BitcoinParser()
 start = getLastBlock()
 print start
 #start = 155000 
-maxBlockNum = 10 
+maxBlockNum = 100000 
 try:
   parser.startParsing(start, maxBlockNum)
+  saveBlockNum(start+maxBlockNum)
+  end = int(time.time() - start_time)
+  printTime(start_time, end)
 except ValueError:
   print "Attendere qualche secondo prima di avviare."
   print "Il Demone bitcoind potrebbe non essere ancora operativo"
 
-saveBlockNum(start+maxBlockNum)
 
 
-end = int(time.time() - start_time)
-printTime(start_time, end)
