@@ -30,7 +30,7 @@ class Dao:
 		return self.decode_address( self.db.addresses.find({"_id" : address_hash})[0] )
 
 	def updateAddress(self, address, tx):
-		self.db.addresses.update({"_id" : address._id}, address)
+		self.db.addresses.update({"_id" : address._id}, self.encode_address(address))
 		self.db.transactions.insert(self.encode_transaction(tx))
 
 	def addressesCount(self):
@@ -85,13 +85,13 @@ class Dao:
 		address.miningCount = document["miningCount"]
 		
 		for tx in document['tx_mining']:
-			address.tx_mining.append(decode_transaction(tx))
+			address.tx_mining.append(self.decode_transaction(tx))
 
 		for tx in document['tx_payment']:
-			address.tx_payment.append(decode_transaction(tx))
+			address.tx_payment.append(self.decode_transaction(tx))
 	
 		for tx in document['tx_credit']:
-			address.tx_credit.append(decode_transaction(tx))
+			address.tx_credit.append(self.decode_transaction(tx))
 	
 		address.totBitCoinMined = document['totBitCoinMined']
 		address.totDollarMined = document['totDollarMined']
