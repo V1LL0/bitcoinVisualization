@@ -22,8 +22,10 @@ class Dao:
 		# self.db = self.client['bitcoinDB']
 
 	def insertAddress(self, address, tx):
-		self.db.addresses.insert(self.encode_address(address))
-		self.db.transactions.insert(self.encode_transaction(tx))
+		# self.db.addresses.insert(self.encode_address(address))
+		# self.db.transactions.insert(self.encode_transaction(tx))
+		self.db.addresses.update({"_id" : address._id}, self.encode_address(address),upsert=True)
+		self.db.addresses.update({"_id" : tx._id}, self.encode_transaction(tx),upsert=True)
 
 	def getAddress(self, address_hash):
 		#return self.db.addresses.find_one({"_id" : address_hash})

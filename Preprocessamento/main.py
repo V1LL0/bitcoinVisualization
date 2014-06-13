@@ -34,7 +34,7 @@ parser = BitcoinParser()
 start = getLastBlock()
 print start
 #start = 155000 
-maxBlockNum = 100000 
+maxBlockNum = 10000
 try:
   parser.startParsing(start, maxBlockNum)
   saveBlockNum(start+maxBlockNum)
