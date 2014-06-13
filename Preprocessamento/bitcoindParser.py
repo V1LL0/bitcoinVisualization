@@ -62,23 +62,27 @@ class BitcoinParser:
 			
 			#Le altre transazioni aggiungo informazioni
 			for tx_index in range(1, len(block['tx'])):
-				tx = block['tx'][tx_index]
-				tx_obj = Transaction(tx, block['time'])
-				
-				miners = self.getAllMinerFromList(tx_obj.addressesValue_sending)  #filtrare la lista in python
-				if ( len(miners) > 0):
-					for miner in miners:
-						address_obj = self.dao.getAddress(miner)
-						address_obj.addNewPayment(tx_obj)
-						self.dao.updateAddress(address_obj, tx_obj)
+				try:
+					tx = block['tx'][tx_index]
+					tx_obj = Transaction(tx, block['time'])
+					
+					miners = self.getAllMinerFromList(tx_obj.addressesValue_sending)  #filtrare la lista in python
+					if ( len(miners) > 0):
+						for miner in miners:
+							address_obj = self.dao.getAddress(miner)
+							address_obj.addNewPayment(tx_obj)
+							self.dao.updateAddress(address_obj, tx_obj)
 
 
-				miners = self.getAllMinerFromList(tx_obj.addressesValue_receving) #filtrare la lista in python
-				if ( len(miners) > 0):
-					for miner in miners:
-						address_obj = self.dao.getAddress(miner)
-						address_obj.addNewCredit(tx_obj)
-						self.dao.updateAddress(address_obj, tx_obj)
+					miners = self.getAllMinerFromList(tx_obj.addressesValue_receving) #filtrare la lista in python
+					if ( len(miners) > 0):
+						for miner in miners:
+							address_obj = self.dao.getAddress(miner)
+							address_obj.addNewCredit(tx_obj)
+							self.dao.updateAddress(address_obj, tx_obj)
+				except KeyError:
+					#salta la transazione
+					a = 0 #non fare nulla
 
 
 
