@@ -75,12 +75,6 @@ class Dao:
 				"totFees" : address.totFees}
 
 
-	'''
-	def decode_address(document):
-		assert document["_type"] == "address"
-		return Address(document)
-	'''
-
 	def decode_address(self, document):
 		assert document["_type"] == "address"
 		address = Address(document['_id'], self.converter)
