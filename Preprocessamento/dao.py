@@ -33,7 +33,7 @@ class Dao:
 
 	def updateAddress(self, address, tx):
 		self.db.addresses.update({"_id" : address._id}, self.encode_address(address))
-		self.db.transactions.insert(self.encode_transaction(tx))
+		self.db.addresses.update({"_id" : tx._id}, self.encode_transaction(tx),upsert=True)
 
 	def addressesCount(self):
 		return self.db.addresses.count

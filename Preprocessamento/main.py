@@ -19,9 +19,8 @@ def saveBlockNum(num):
 
 def printTime(start,end):
   end_sec = int(end%60)
-  end_min = int(end/60)
+  end_min = int((end/60)%60)
   end_h = int(end_min/60)
-
   print end_h, " hours ", end_min, " minutes ", end_sec, " seconds "
 
 
@@ -32,9 +31,8 @@ start_time = time.time()
 
 parser = BitcoinParser()
 start = getLastBlock()
-print start
 #start = 155000 
-maxBlockNum = 2
+maxBlockNum = 2000
 try:
   parser.startParsing(start, maxBlockNum)
   saveBlockNum(start+maxBlockNum)
