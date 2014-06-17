@@ -40,7 +40,8 @@ app.get('/', function(req, res, next){
   res.render("index");  
 } );
 
-router.get('/minerList', function(req, res) {
+//router.get(...)
+app.get('/minerList', function(req, res) {
     var db = req.db;
     var collection = db.get('addresses');
     var num = 0;
