@@ -56,3 +56,23 @@ app.get('/minerList', function(req, res) {
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 }); 
+
+
+
+
+
+/////////MONGO////////////////
+
+var MongoClient = require('mongodb').MongoClient;
+
+MongoClient.connect("mongodb://localhost:27017/bitcoinDB", function(err, db) {
+	// Get an aggregation cursor
+	var collection = db.collection('addresses');
+
+	collection.find().toArray(function(err, docs) {
+		console.log(docs);
+	});
+
+});
+
+
