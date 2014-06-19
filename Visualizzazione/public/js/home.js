@@ -36,8 +36,8 @@ vis.append('svg:rect')
 // init force layout
 var force = d3.layout.force()
     .size([width, height])
-    // .nodes([{x:100, y:100},{x:100,y:100},{x:100,y:100},{x:100,y:100},{x:100,y:100}]) // initialize with a single node
-    .nodes(initNodes()) // initialize with a single node
+    .nodes([{x:100, y:100},{x:100,y:100},{x:100,y:100},{x:100,y:100},{x:100,y:100}]) // initialize with a single node
+    // .nodes(nodes) // initialize with a single node
     .linkDistance(50)
     .charge(-200)
     .on("tick", tick);
@@ -61,7 +61,7 @@ var nodes = force.nodes(),
 d3.select(window)
     .on("keydown", keydown);
 
-redraw();
+// redraw();
 
 // focus on svg
 // vis.node().focus();
@@ -156,16 +156,14 @@ function redraw() {
 
   link.exit().remove();
 
-  link
-    .classed("link_selected", function(d) { return d === selected_link; });
+  link.classed("link_selected", function(d) { return d === selected_link; });
 
   node = node.data(nodes);
 
   node.enter().insert("circle")
       .attr("class", "node")
       .attr("r", 5)
-      .on("mousedown", 
-        function(d) { 
+      .on("mousedown", function(d) { 
           // disable zoom
           vis.call(d3.behavior.zoom().on("zoom"), null);
 
@@ -261,7 +259,34 @@ function keydown() {
 
 
 //Definite da noi
+nodesList = []
+nodes2Hash = {}
+
+function startD3JS(){
+  redraw();
+}
+
+function getJSONFromString(string){
+  return jQuery.parseJSON( string );
+}
 
 function initNodes(){
-  
+  // $.ajax({
+  //   type: 'get',
+  //   url: '/minerList',
+  //   success: function (data) {
+  //     json = getJSONFromString(data)
+  //     //console.log(json)
+  //     nodes2Hash = json
+  //     Object.keys(json).forEach(function(num){
+  //       nodes.push({'number':num, 'x':100, 'y':100})
+  //     });
+  //     console.log(nodes)
+  //     startD3JS();
+  //   }
+  // })
+  nodesList = [{'x':100, 'y':100},{'x':100, 'y':100},{'x':100, 'y':100}]
+  startD3JS();
 }
+redraw();
+// initNodes()
