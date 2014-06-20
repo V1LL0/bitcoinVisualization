@@ -48,11 +48,7 @@ http.createServer(app).listen(app.get('port'), function(){
 
 //router.get(...)
 app.get('/minerList', function(req, res) {
-//router.get(...)
-app.get('/minerList', function(req, res) {
   res.end(JSON.stringify(minerDictionary));
-});
-
 });
 
 

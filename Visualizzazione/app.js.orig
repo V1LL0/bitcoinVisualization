@@ -48,11 +48,11 @@ http.createServer(app).listen(app.get('port'), function(){
 
 //router.get(...)
 app.get('/minerList', function(req, res) {
-//router.get(...)
-app.get('/minerList', function(req, res) {
+<<<<<<< HEAD
   res.end(JSON.stringify(minerDictionary));
-});
-
+=======
+    res.write(JSON.stringify(minerDictionary))
+>>>>>>> 24f1908b00f41790e3c4d2b9432dbb65667076ac
 });
 
 
@@ -60,15 +60,24 @@ app.get('/minerList', function(req, res) {
 /////////MONGO////////////////
 
 var minerDictionary = {}
+<<<<<<< HEAD
 
 var MongoClient = require('mongodb').MongoClient;
 
 MongoClient.connect("mongodb://localhost:27017/bitcoinDB", getMinerList);
 
+=======
+
+var MongoClient = require('mongodb').MongoClient;
+
+MongoClient.connect("mongodb://localhost:27017/bitcoinDB", getMinerList);
+
+>>>>>>> 24f1908b00f41790e3c4d2b9432dbb65667076ac
 function getMinerList(err, db){
   var num = 0;
   var minerDict = {}
   db.collection('addresses').find({'_type':'address'},{'_id':1}).toArray(function(err, items) {
+<<<<<<< HEAD
     var MAX = 50;
     items.forEach(function(miner){
       if (num<50){
@@ -79,5 +88,12 @@ function getMinerList(err, db){
     // console.log(JSON.stringify(minerDictionary))
     console.log("oggetti caricati")
     console.log(minerDictionary)
+=======
+    items.forEach(function(miner){
+      minerDictionary[num] = miner['_id'];
+      num++;
+    });
+    // console.log(JSON.stringify(minerDictionary))
+>>>>>>> 24f1908b00f41790e3c4d2b9432dbb65667076ac
   });
 }

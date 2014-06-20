@@ -48,11 +48,7 @@ http.createServer(app).listen(app.get('port'), function(){
 
 //router.get(...)
 app.get('/minerList', function(req, res) {
-//router.get(...)
-app.get('/minerList', function(req, res) {
-  res.end(JSON.stringify(minerDictionary));
-});
-
+    res.write(JSON.stringify(minerDictionary))
 });
 
 
@@ -69,15 +65,10 @@ function getMinerList(err, db){
   var num = 0;
   var minerDict = {}
   db.collection('addresses').find({'_type':'address'},{'_id':1}).toArray(function(err, items) {
-    var MAX = 50;
     items.forEach(function(miner){
-      if (num<50){
-        minerDictionary[num] = miner['_id'];
-        num++;
-      }
+      minerDictionary[num] = miner['_id'];
+      num++;
     });
     // console.log(JSON.stringify(minerDictionary))
-    console.log("oggetti caricati")
-    console.log(minerDictionary)
   });
 }
