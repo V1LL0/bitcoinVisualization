@@ -1,39 +1,6 @@
-var width = 960
-var height = 500
-var fill = d3.scale.category20()
-
-var node2Miner = {}
-var nodesList = []
-var MINER_NUM = 50
-
-/** Funzioni **/
-function startD3JS(){
-  redraw();
-}
-
-function getJSONFromString(string){
-  return jQuery.parseJSON( string );
-}
-
-function initNodes(){
-  $.ajax({
-    type: 'get',
-    url: '/minerList',
-    success: function (data) {
-      json = getJSONFromString(data)
-      //console.log(json)
-      node2Miner = json
-      Object.keys(json).forEach(function(num){
-        nodes.push({'number':num, 'x':100, 'y':100})
-      });
-      console.log(nodes)
-      startD3JS();
-    }
-  })
-}
-
-/** Fine **/
-
+var width = 960,
+    height = 500,
+    fill = d3.scale.category20();
 
 // mouse event vars
 var selected_node = null,
@@ -42,71 +9,58 @@ var selected_node = null,
     mousedown_node = null,
     mouseup_node = null;
 
-var outer = null;
-var vis = null;
-var force = null;
-var drag_line = null;
-var nodes = null,
-    links = null,
-    node = null,
-    link = null;
-
 // init svg
-function initSvg(){
-  outer = d3.select("body")
-    .append("svg:svg")
-      .attr("width", width)
-      .attr("height", height)
-      .attr("pointer-events", "all");
-}
+var outer = d3.select("#chart")
+  .append("svg:svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("pointer-events", "all");
 
-function addInteractionEvents(){
-  vis = outer
-    .append('svg:g')
-      .call(d3.behavior.zoom().on("zoom", rescale))
-      .on("dblclick.zoom", null)
-    .append('svg:g')
-      .on("mousemove", mousemove)
-      .on("mousedown", mousedown)
-      .on("mouseup", mouseup);
+var vis = outer
+  .append('svg:g')
+    .call(d3.behavior.zoom().on("zoom", rescale))
+    .on("dblclick.zoom", null)
+  .append('svg:g')
+    .on("mousemove", mousemove)
+    .on("mousedown", mousedown)
+    .on("mouseup", mouseup);
 
-  vis.append('svg:rect')
-      .attr('width', width)
-      .attr('height', height)
-      .attr('fill', 'white');
-}
+vis.append('svg:rect')
+    .attr('width', width)
+    .attr('height', height)
+    .attr('fill', 'white');
+
+// init force layout
+var force = d3.layout.force()
+    .size([width, height])
+    .nodes([{}]) // initialize with a single node
+    .linkDistance(50)
+    .charge(-200)
+    .on("tick", tick);
 
 
-function initLayout(){
-  // init force layout
-  force = d3.layout.force()
-      .size([width, height])
-      // .nodes([{x:100, y:100},{x:100,y:100},{x:100,y:100},{x:100,y:100},{x:100,y:100}]) // initialize with a single node
-      .nodes(nodesList) // initialize with a single node
-      .linkDistance(50)
-      .charge(-200)
-      .on("tick", tick);
-}
-
-function completeSVG(){
 // line displayed when dragging new nodes
-  drag_line = vis.append("line")
-      .attr("class", "drag_line")
-      .attr("x1", 0)
-      .attr("y1", 0)
-      .attr("x2", 0)
-      .attr("y2", 0);
+var drag_line = vis.append("line")
+    .attr("class", "drag_line")
+    .attr("x1", 0)
+    .attr("y1", 0)
+    .attr("x2", 0)
+    .attr("y2", 0);
 
-  // get layout properties
-  nodes = force.nodes();
-  links = force.links();
-  node = vis.selectAll(".node");
-  link = vis.selectAll(".link");
+// get layout properties
+var nodes = force.nodes(),
+    links = force.links(),
+    node = vis.selectAll(".node"),
+    link = vis.selectAll(".link");
 
-  // add keyboard callback
-  d3.select(window)
-      .on("keydown", keydown);
-}
+// add keyboard callback
+d3.select(window)
+    .on("keydown", keydown);
+
+redraw();
+
+// focus on svg
+// vis.node().focus();
 
 function mousedown() {
   if (!mousedown_node && !mousedown_link) {
@@ -198,14 +152,16 @@ function redraw() {
 
   link.exit().remove();
 
-  link.classed("link_selected", function(d) { return d === selected_link; });
+  link
+    .classed("link_selected", function(d) { return d === selected_link; });
 
   node = node.data(nodes);
 
   node.enter().insert("circle")
       .attr("class", "node")
       .attr("r", 5)
-      .on("mousedown", function(d) { 
+      .on("mousedown", 
+        function(d) { 
           // disable zoom
           vis.call(d3.behavior.zoom().on("zoom"), null);
 
@@ -298,13 +254,3 @@ function keydown() {
     }
   }
 }
-
-
-
-initNodes();
-initSvg();
-addInteractionEvents();
-initLayout();
-completeSVG();
-
-redraw();
