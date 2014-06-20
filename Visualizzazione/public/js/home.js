@@ -1,8 +1,9 @@
-var width = 960
-var height = 500
+var width = 2024
+var height = 800
 var fill = d3.scale.category20()
 
 var node2Miner = {}
+var node2Miner_inverted = {}
 var nodesList = []
 var MINER_NUM = 50
 
@@ -15,22 +16,58 @@ function getJSONFromString(string){
   return jQuery.parseJSON( string );
 }
 
-function initNodes(){
+function callGet(path, callback){
   $.ajax({
     type: 'get',
-    url: '/minerList',
-    success: function (data) {
-      json = getJSONFromString(data)
-      //console.log(json)
-      node2Miner = json
-      Object.keys(json).forEach(function(num){
-        nodes.push({'number':num, 'x':100, 'y':100})
-      });
-      console.log(nodes)
-      startD3JS();
-    }
-  })
+    url: path,
+    success: function(data){ callback(data); }
+  });
 }
+
+function initNodes(){
+  callGet('/minerList', function(data){
+    json = getJSONFromString(data)
+    //console.log(json)
+    node2Miner = json
+    Object.keys(json).forEach(function(num){
+      nodes.push({'number':num, 'x':100, 'y':100})
+      node2Miner_inverted[ node2Miner[num]] = num
+    });
+    console.log(nodes)
+    // startD3JS();
+    //initLinks();
+  });
+}
+
+function addLink(source, target){
+    var link = {"source": parseInt(source), "target": parseInt(target)};
+    links.push(link);
+}
+
+function initLinks(){
+  
+
+  callGet('/minerInteractionsList', function(data){
+    json = getJSONFromString(data);
+    console.log(json)
+    hash_keys = Object.keys(json);
+    hash_keys.forEach(function(hash_pay){
+      hash_credit_list = json[hash_pay]
+      hash_credit_list.forEach(function(hash_credit){
+        console.log("addLink(" + node2Miner_inverted[hash_pay] + ", " + node2Miner_inverted[hash_credit] + ")")
+        addLink(node2Miner_inverted[hash_pay], node2Miner_inverted[hash_credit]);
+        startD3JS();
+      });
+    })
+    // addLink(19, 30);
+    console.log(links);
+    // startD3JS();
+  });
+
+}
+
+
+
 
 /** Fine **/
 
@@ -47,13 +84,13 @@ var vis = null;
 var force = null;
 var drag_line = null;
 var nodes = null,
-    links = null,
+    links = [],
     node = null,
     link = null;
 
 // init svg
 function initSvg(){
-  outer = d3.select("body")
+  outer = d3.select("#visualization")
     .append("svg:svg")
       .attr("width", width)
       .attr("height", height)
@@ -66,9 +103,9 @@ function addInteractionEvents(){
       .call(d3.behavior.zoom().on("zoom", rescale))
       .on("dblclick.zoom", null)
     .append('svg:g')
-      .on("mousemove", mousemove)
+      //.on("mousemove", mousemove)
       .on("mousedown", mousedown)
-      .on("mouseup", mouseup);
+      //.on("mouseup", mouseup);
 
   vis.append('svg:rect')
       .attr('width', width)
@@ -88,6 +125,7 @@ function initLayout(){
       .on("tick", tick);
 }
 
+
 function completeSVG(){
 // line displayed when dragging new nodes
   drag_line = vis.append("line")
@@ -103,9 +141,9 @@ function completeSVG(){
   node = vis.selectAll(".node");
   link = vis.selectAll(".link");
 
-  // add keyboard callback
-  d3.select(window)
-      .on("keydown", keydown);
+  // // add keyboard callback
+  // d3.select(window)
+  //     .on("keydown", keydown);
 }
 
 function mousedown() {
@@ -129,29 +167,29 @@ function mousemove() {
 }
 
 function mouseup() {
-  if (mousedown_node) {
-    // hide drag line
-    drag_line
-      .attr("class", "drag_line_hidden")
+  // if (mousedown_node) {
+  //   //// hide drag line
+  //   drag_line
+  //     .attr("class", "drag_line_hidden")
 
-    if (!mouseup_node) {
-      // add node
-      var point = d3.mouse(this),
-        node = {x: point[0], y: point[1]},
-        n = nodes.push(node);
+  //   if (!mouseup_node) {
+  //     // add node
+  //     var point = d3.mouse(this),
+  //       node = {x: point[0], y: point[1]},
+  //       n = nodes.push(node);
 
-      // select new node
-      selected_node = node;
-      selected_link = null;
+  //     // select new node
+  //     selected_node = node;
+  //     selected_link = null;
       
-      // add link to mousedown node
-      links.push({source: mousedown_node, target: node});
-    }
+  //     // add link to mousedown node
+  //     links.push({source: mousedown_node, target: node});
+  //   }
 
-    redraw();
-  }
-  // clear mouse event vars
-  resetMouseVars();
+  //   redraw();
+  // }
+  // // clear mouse event vars
+  // resetMouseVars();
 }
 
 function resetMouseVars() {
@@ -172,6 +210,7 @@ function tick() {
 
 // rescale g
 function rescale() {
+  console.log("zoom del grafo")
   trans=d3.event.translate;
   scale=d3.event.scale;
 
@@ -214,39 +253,41 @@ function redraw() {
           else selected_node = mousedown_node; 
           selected_link = null; 
 
+          console.log("selezionato il nodo " + selected_node['number'])
+
           // reposition drag line
-          drag_line
-              .attr("class", "link")
-              .attr("x1", mousedown_node.x)
-              .attr("y1", mousedown_node.y)
-              .attr("x2", mousedown_node.x)
-              .attr("y2", mousedown_node.y);
+          // drag_line
+          //     .attr("class", "link")
+          //     .attr("x1", mousedown_node.x)
+          //     .attr("y1", mousedown_node.y)
+          //     .attr("x2", mousedown_node.x)
+          //     .attr("y2", mousedown_node.y);
 
           redraw(); 
         })
-      .on("mousedrag",
-        function(d) {
-          // redraw();
-        })
-      .on("mouseup", 
-        function(d) { 
-          if (mousedown_node) {
-            mouseup_node = d; 
-            if (mouseup_node == mousedown_node) { resetMouseVars(); return; }
+      // .on("mousedrag",
+      //   function(d) {
+      //     // redraw();
+      //   })
+      // .on("mouseup", 
+      //   function(d) { 
+      //     if (mousedown_node) {
+      //       mouseup_node = d; 
+      //       if (mouseup_node == mousedown_node) { resetMouseVars(); return; }
 
-            // add link
-            var link = {source: mousedown_node, target: mouseup_node};
-            links.push(link);
+      //       // add link
+      //       var link = {source: mousedown_node, target: mouseup_node};
+      //       links.push(link);
 
-            // select new link
-            selected_link = link;
-            selected_node = null;
+      //       // select new link
+      //       selected_link = link;
+      //       selected_node = null;
 
-            // enable zoom
-            vis.call(d3.behavior.zoom().on("zoom"), rescale);
-            redraw();
-          } 
-        })
+      //       // enable zoom
+      //       vis.call(d3.behavior.zoom().on("zoom"), rescale);
+      //       redraw();
+      //     } 
+      //   })
     .transition()
       .duration(750)
       .ease("elastic")
@@ -285,11 +326,13 @@ function keydown() {
     case 8: // backspace
     case 46: { // delete
       if (selected_node) {
-        nodes.splice(nodes.indexOf(selected_node), 1);
-        spliceLinksForNode(selected_node);
+        console.log("nodo selezionato")
+        // nodes.splice(nodes.indexOf(selected_node), 1);
+        // spliceLinksForNode(selected_node);
       }
       else if (selected_link) {
-        links.splice(links.indexOf(selected_link), 1);
+        console.log("arco selezionato")
+        // links.splice(links.indexOf(selected_link), 1);
       }
       selected_link = null;
       selected_node = null;
@@ -308,3 +351,4 @@ initLayout();
 completeSVG();
 
 redraw();
+initLinks();
