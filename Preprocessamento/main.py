@@ -3,7 +3,7 @@
 from bitcoindParser import BitcoinParser
 import time
 
-fileName = 'lastBlockReaded'
+fileName = 'nextBlockToRead'
 
 def getLastBlock():
   file = open(fileName, 'r')
@@ -32,7 +32,7 @@ start_time = time.time()
 parser = BitcoinParser()
 start = getLastBlock()
 #start = 155000 
-maxBlockNum = 7000
+maxBlockNum = 50000
 try:
   parser.startParsing(start, maxBlockNum)
   saveBlockNum(start+maxBlockNum)
