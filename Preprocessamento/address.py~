@@ -57,7 +57,7 @@ class Address:
 		while True:
 			fee = tx.value_out - profit
 			profit = profit / 2
-			if fee >= 0:
+			if fee > 0:
 				return fee	
 
 	def __str__(self):
