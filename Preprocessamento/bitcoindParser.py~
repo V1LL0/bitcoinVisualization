@@ -48,12 +48,12 @@ class BitcoinParser:
 			#I miner vengono creati solo per la tx0
 			for address in tx.addressesValue_receving:
 				if address[0] in self.minersAddress:
-				#	print "Stesso minatore " + address[0]
+					print "Stesso minatore " + address[0]
 					address_obj = self.dao.getAddress(address[0])
 					address_obj.addNewMining(tx)
 					self.dao.updateAddress(address_obj, tx)
 				else:
-				#	print "Minatore nuovo " + address[0]
+					print "Minatore nuovo " + address[0]
 					address_obj = Address(str(address[0]), self.bitcoinToDollar)
 					address_obj.addNewMining(tx)
 					self.minersAddress.append(address[0])
@@ -66,21 +66,21 @@ class BitcoinParser:
 					tx = block['tx'][tx_index]
 					tx_obj = Transaction(tx, block['time'])
 					
-				        #print("TX_OBJECT.SENDING: " + str(tx_obj.addressesValue_sending))
+					print("TX_OBJECT.SENDING: " + str(tx_obj.addressesValue_sending))
 					miners = self.getAllMinerFromList(tx_obj.addressesValue_sending)  #filtrare la lista in python
 					if ( len(miners) > 0):
 						for miner in miners:
-					#		print("A CI SO' ENTRATO QUA!, SENDING")
+							print("A CI SO' ENTRATO QUA!, SENDING")
 							address_obj = self.dao.getAddress(miner)
 							address_obj.addNewPayment(tx_obj)
 							self.dao.updateAddress(address_obj, tx_obj)
 
 
-					#print("TX_OBJECT.RECEIVING: " + str(tx_obj.addressesValue_receving))
+					print("TX_OBJECT.RECEIVING: " + str(tx_obj.addressesValue_receving))
 					miners = self.getAllMinerFromList(tx_obj.addressesValue_receving) #filtrare la lista in python
 					if ( len(miners) > 0):
 						for miner in miners:
-						#	print("A CI SO' ENTRATO QUA!, RECEIVING")
+							print("A CI SO' ENTRATO QUA!, RECEIVING")
 							address_obj = self.dao.getAddress(miner)
 							address_obj.addNewCredit(tx_obj)
 							self.dao.updateAddress(address_obj, tx_obj)
