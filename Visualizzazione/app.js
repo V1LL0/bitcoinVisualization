@@ -67,16 +67,19 @@ MongoClient.connect("mongodb://localhost:27017/bitcoinDB", getMinerList);
 
 function getMinerList(err, db){
  var num = 0;
- db.collection('addresses').find({'_type':'address'},{'_id':1}).toArray(function(err, items) {
+ db.collection('addresses').find({},{'_id':1}).toArray(function(err, items) {
    var MAX = 50;
    items.forEach(function(miner){
      if (num<MAX){
        minerDictionary[num] = miner['_id'];
        num++;
-     }
+      }    
+    console.log(miner)
+     
    });
-   console.log(JSON.stringify(minerDictionary))
-   console.log("node loaded")    
+
+   //console.log(JSON.stringify(minerDictionary))
+   //console.log("node loaded")    
    //getMinersInteraction(err, db);
  });
 }
