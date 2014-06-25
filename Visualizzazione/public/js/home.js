@@ -256,38 +256,38 @@ function redraw() {
           console.log("selezionato il nodo " + selected_node['number'])
 
           // reposition drag line
-          // drag_line
-          //     .attr("class", "link")
-          //     .attr("x1", mousedown_node.x)
-          //     .attr("y1", mousedown_node.y)
-          //     .attr("x2", mousedown_node.x)
-          //     .attr("y2", mousedown_node.y);
+          drag_line
+              .attr("class", "link")
+              .attr("x1", mousedown_node.x)
+              .attr("y1", mousedown_node.y)
+              .attr("x2", mousedown_node.x)
+              .attr("y2", mousedown_node.y);
 
           redraw(); 
         })
-      // .on("mousedrag",
-      //   function(d) {
-      //     // redraw();
-      //   })
-      // .on("mouseup", 
-      //   function(d) { 
-      //     if (mousedown_node) {
-      //       mouseup_node = d; 
-      //       if (mouseup_node == mousedown_node) { resetMouseVars(); return; }
+      .on("mousedrag",
+        function(d) {
+          // redraw();
+        })
+      .on("mouseup", 
+        function(d) { 
+          if (mousedown_node) {
+            mouseup_node = d; 
+            if (mouseup_node == mousedown_node) { resetMouseVars(); return; }
 
-      //       // add link
-      //       var link = {source: mousedown_node, target: mouseup_node};
-      //       links.push(link);
+            // add link
+            var link = {source: mousedown_node, target: mouseup_node};
+            links.push(link);
 
-      //       // select new link
-      //       selected_link = link;
-      //       selected_node = null;
+            // select new link
+            selected_link = link;
+            selected_node = null;
 
-      //       // enable zoom
-      //       vis.call(d3.behavior.zoom().on("zoom"), rescale);
-      //       redraw();
-      //     } 
-      //   })
+            // enable zoom
+            vis.call(d3.behavior.zoom().on("zoom"), rescale);
+            redraw();
+          } 
+        })
     .transition()
       .duration(750)
       .ease("elastic")
@@ -326,12 +326,10 @@ function keydown() {
     case 8: // backspace
     case 46: { // delete
       if (selected_node) {
-        console.log("nodo selezionato")
         // nodes.splice(nodes.indexOf(selected_node), 1);
         // spliceLinksForNode(selected_node);
       }
       else if (selected_link) {
-        console.log("arco selezionato")
         // links.splice(links.indexOf(selected_link), 1);
       }
       selected_link = null;
