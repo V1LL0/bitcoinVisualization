@@ -71,8 +71,8 @@ function getMinerList(err, db){
   var num = 0;
   db.collection('addresses').find({'_type':'address'},{'_id':1}).toArray(function(err, items) {
     var MAX = 1000;
-    // var MIN = 100000;
-    var MIN = 0;
+    var MIN = 100000;
+//    var MIN = 0;
     var toskip = 0;
     items.forEach(function(miner){
       if (toskip>=MIN && toskip<MAX+MIN){
