@@ -7,7 +7,7 @@ class Transaction:
 	def __init__(self, txid, time_block):
 		
 		#Pre- Elaborazioni
-		print "txid: " + txid
+		#print "txid: " + txid
 		tx = getJSONTransactionFromID(txid)
 		value_in = 0
 		value_out = 0

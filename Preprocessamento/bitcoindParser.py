@@ -30,9 +30,9 @@ class BitcoinParser:
 		self.minersAddress = self.dao.getMinersList()
 		#print self.minersAddress
 
-	def getAllMinerFromList(self, addressesValue_sending):
+	def getAllMinerFromList(self, addressesValue):
 		outList = []
-		for address in addressesValue_sending:
+		for address in addressesValue:
 			if address[0] in self.minersAddress:
 				outList.append(address[0])
 		return outList
@@ -40,7 +40,7 @@ class BitcoinParser:
 	def startParsing(self, start, maxBlockNum):
 
 		for i in range(start, start+maxBlockNum):
-			print "Leggo il blocco: "+i+" | "+str(i-start+1) + "/" + str(maxBlockNum)
+			print "Leggo il blocco: "+str(i)+" | "+str(i-start+1) + "/" + str(maxBlockNum)
 
  			block = getBlock(i)
 			tx = Transaction(block['tx'][0], block['time'])
@@ -50,17 +50,17 @@ class BitcoinParser:
 				if address[0] in self.minersAddress:
 					#print "Stesso minatore " + address[0]
 					address_obj = self.dao.getAddress(address[0])
-					address_obj.addNewMining(tx)
+					address_obj.addNewMining(tx, address[1])
 					self.dao.updateAddress(address_obj, tx)
 				else:
 					#print "Minatore nuovo " + address[0]
 					address_obj = Address(str(address[0]), self.bitcoinToDollar)
-					address_obj.addNewMining(tx)
+					address_obj.addNewMining(tx, address[1])
 					self.minersAddress.append(address[0])
 					self.dao.insertAddress(address_obj, tx)
 			
 			
-			#Le altre transazioni aggiungo informazioni
+			#Le altre transazioni aggiungono informazioni
 			for tx_index in range(1, len(block['tx'])):
 				try:
 					tx = block['tx'][tx_index]
@@ -70,8 +70,8 @@ class BitcoinParser:
 					if ( len(miners) > 0):
 						#print("TX_OBJECT.SENDING: " + str(tx_obj.addressesValue_sending))
 						for miner in miners:
-							#print("A CI SO' ENTRATO QUA!, SENDING")
 							address_obj = self.dao.getAddress(miner)
+							#print "A CI SO' ENTRATO QUA!, SENDING - aggiungo un payment a: " + address_obj._id
 							address_obj.addNewPayment(tx_obj)
 							self.dao.updateAddress(address_obj, tx_obj)
 
@@ -80,8 +80,8 @@ class BitcoinParser:
 					if ( len(miners) > 0):
 						#print("TX_OBJECT.RECEIVING: " + str(tx_obj.addressesValue_receving))
 						for miner in miners:
-							#print("A CI SO' ENTRATO QUA!, RECEIVING")
 							address_obj = self.dao.getAddress(miner)
+							#print "A CI SO' ENTRATO QUA!, RECEIVING - aggiungo un credit a: " + address_obj._id
 							address_obj.addNewCredit(tx_obj)
 							self.dao.updateAddress(address_obj, tx_obj)
 				except KeyError:

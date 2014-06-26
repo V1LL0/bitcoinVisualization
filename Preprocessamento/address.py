@@ -23,8 +23,7 @@ class Address:
 		self.totBitCoinMined = 0
 		self.totDollarMined = 0
 		self.currentBitCoin = 0
-		self.totFees = 0
-h		
+		self.totFees = 0		
 
 	def addNewPayment(self, tx):	
 		# print "addNewPayment"
@@ -36,16 +35,22 @@ h
 		self.tx_credit.append(tx)
 		self.currentBitCoin = self.currentBitCoin + tx.value_in
 
-	def addNewMining(self, tx):
+	def addNewMining(self, tx, value):
 		# print "addNewMining"
-		self.miningCount += 1 
+		self.miningCount = self.miningCount + 1
 		self.tx_mining.append(tx)
-
 		fee = self.calculateFee(tx)
+		# if(fee>0):
+		# 	print(tx)
+		# 	print(fee)
 		self.totFees = self.totFees + fee
 
-		value = sum(elem[1] for elem in tx.addressesValue_receving)
-		self.totBitCoinMined = self.totBitCoinMined + (value - fee)
+		#Concettualmente da rivedere, se la transazione di mining viene gia' spartita, devo considerare
+		#che ognuno dei partecipanti ha minato 50 btc? oppure che ognuno ha minato la parte che gli sta arrivando?
+		#Ora come ora stiamo considerando che ogni partecipante mina il totale, che dovrebbe essere 50!
+		#
+		#value = sum(elem[1] for elem in tx.addressesValue_receving) #inutile da calcolare!
+		self.totBitCoinMined = self.totBitCoinMined + value#tx.value_in#value # e' gia' il value senza la fee questo!   - fee)
 		self.totDollarMined = self.totDollarMined + self.converter.convertBitcoin(value, tx)
 		self.currentBitCoin = self.currentBitCoin + value
 
@@ -59,6 +64,17 @@ h
 			profit = profit / 2
 			if fee >= 0:
 				return fee	
+
+	# def calculateFee(value_in, value_out):
+	# 	if value_in > 0:
+	# 		return value_in - value_out
+		
+	# 	profit = float(50)
+	# 	while True:
+	# 		fee = value_out - profit
+	# 		profit = profit / 2
+	# 		if fee >= 0:
+	# 			return fee	
 
 	def __str__(self):
 		return "{" +  \
