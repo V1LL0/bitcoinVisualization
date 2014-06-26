@@ -66,20 +66,24 @@ class BitcoinParser:
 					tx = block['tx'][tx_index]
 					tx_obj = Transaction(tx, block['time'])
 				
+					print("TX_OBJECT.SENDING: " + str(tx_obj.addressesValue_sending))
 					miners = self.getAllMinerFromList(tx_obj.addressesValue_sending)  #filtrare la lista in python
 					if ( len(miners) > 0):
 						#print("TX_OBJECT.SENDING: " + str(tx_obj.addressesValue_sending))
 						for miner in miners:
+							print("A CI SO' ENTRATO QUA!, SENDING")
 							address_obj = self.dao.getAddress(miner)
 							#print "A CI SO' ENTRATO QUA!, SENDING - aggiungo un payment a: " + address_obj._id
 							address_obj.addNewPayment(tx_obj)
 							self.dao.updateAddress(address_obj, tx_obj)
 
 
+					print("TX_OBJECT.RECEIVING: " + str(tx_obj.addressesValue_receving))
 					miners = self.getAllMinerFromList(tx_obj.addressesValue_receving) #filtrare la lista in python
 					if ( len(miners) > 0):
 						#print("TX_OBJECT.RECEIVING: " + str(tx_obj.addressesValue_receving))
 						for miner in miners:
+							print("A CI SO' ENTRATO QUA!, RECEIVING")
 							address_obj = self.dao.getAddress(miner)
 							#print "A CI SO' ENTRATO QUA!, RECEIVING - aggiungo un credit a: " + address_obj._id
 							address_obj.addNewCredit(tx_obj)

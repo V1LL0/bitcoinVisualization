@@ -26,7 +26,7 @@ class Transaction:
 				prec_vout = tx_in['vout'][index]
 				for address in prec_vout['scriptPubKey']['addresses']:
 					value_in = value_in + vout['value']
-					addressesValue_sending.append( (address, prec_vout['value']) ) 
+					addressesValue_sending.append( (str(address), prec_vout['value']) ) 
 		except KeyError:
 			#Potrebbe essere una transazione zero
 			addressesValue_sending = [] #In tal caso non ha sending

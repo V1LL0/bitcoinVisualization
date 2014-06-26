@@ -25,10 +25,8 @@ def bestEarnerMinerComparator():
 class BitcoinParser:
 
 	def __init__(self):
-		self.bitcoinToDollar = BitcoinConverter()
-		self.dao = Dao(self.bitcoinToDollar)
-		self.minersAddress = self.dao.getMinersList()
-		print self.minersAddress
+
+
 
 	def getAllMinerFromList(self, addressesValue_sending):
 		outList = []
