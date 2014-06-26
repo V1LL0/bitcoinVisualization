@@ -24,7 +24,7 @@ class Address:
 		self.totDollarMined = 0
 		self.currentBitCoin = 0
 		self.totFees = 0
-		
+h		
 
 	def addNewPayment(self, tx):	
 		# print "addNewPayment"

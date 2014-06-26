@@ -25,7 +25,7 @@ class Dao:
 		# self.db.addresses.insert(self.encode_address(address))
 		# self.db.transactions.insert(self.encode_transaction(tx))
 		self.db.addresses.update({"_id" : address._id}, self.encode_address(address),upsert=True)
-		self.db.addresses.update({"_id" : tx._id}, self.encode_transaction(tx),upsert=True)
+		self.db.transactions.update({"_id" : tx._id}, self.encode_transaction(tx),upsert=True)
 
 	def getAddress(self, address_hash):
 		#return self.db.addresses.find_one({"_id" : address_hash})
@@ -33,10 +33,19 @@ class Dao:
 
 	def updateAddress(self, address, tx):
 		self.db.addresses.update({"_id" : address._id}, self.encode_address(address))
-		self.db.addresses.update({"_id" : tx._id}, self.encode_transaction(tx),upsert=True)
+		self.db.transactions.update({"_id" : tx._id}, self.encode_transaction(tx),upsert=True)
 
 	def addressesCount(self):
 		return self.db.addresses.count
+
+	def getMinersList(self):
+		def objList2StringList(objList):
+			stringList = []
+			for miner in objList:
+				stringList.append(miner['_id'])
+			return stringList
+
+		return objList2StringList( self.db.addresses.find({},{"_id":1}) )
 
 
 	def dropDB(self):
@@ -51,7 +60,6 @@ class Dao:
 
 
 		txMining = []
-		
 		for txM in address.tx_mining:
 			txMining.append(self.encode_transaction(txM))
 
@@ -80,14 +88,14 @@ class Dao:
 		address = Address(document['_id'], self.converter)
 		address.miningCount = document["miningCount"]
 		
-		for tx in document['tx_mining']:
-			address.tx_mining.append(self.decode_transaction(tx))
+		for txM in document['tx_mining']:
+			address.tx_mining.append(self.decode_transaction(txM))
 
-		for tx in document['tx_payment']:
-			address.tx_payment.append(self.decode_transaction(tx))
+		for txP in document['tx_payment']:
+			address.tx_payment.append(self.decode_transaction(txP))
 	
-		for tx in document['tx_credit']:
-			address.tx_credit.append(self.decode_transaction(tx))
+		for txC in document['tx_credit']:
+			address.tx_credit.append(self.decode_transaction(txC))
 	
 		address.totBitCoinMined = document['totBitCoinMined']
 		address.totDollarMined = document['totDollarMined']
