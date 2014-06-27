@@ -79,16 +79,18 @@ MongoClient.connect("mongodb://localhost:27017/bitcoinDB", initData);
 function getMinerList(err, db){
 	var num = 0;
 	db.collection('addresses').find({'_type':'address'},{'_id':1}).toArray(function(err, items) {
-		var MAX = 10000;
-		var MIN = 0;
+		var MAX = 21000;
+		var MIN = 20000;
 //		var MIN = 0;
 		var toskip = 0;
 		items.forEach(function(miner){
 //			if (toskip>=MIN && toskip<MAX+MIN){
-			minerDictionary[num] = miner['_id'];
-			num++;
+			if(num<MAX-MIN){
+				minerDictionary[num] = miner['_id'];
+				num++;
+			}
 //			}
-			toskip++;
+//			toskip++;
 		});
 		console.log("node loaded")    
 		getMinersInteraction(err, db);
@@ -96,51 +98,51 @@ function getMinerList(err, db){
 }
 
 //Crea un dizionario in cui memorizza quali minatori hanno pagati altri minatori
-function getMinersInteraction(err, db){ //TODO: da rendere asincrono: http://justinklemm.com/node-js-async-tutorial/ 
+function getMinersInteraction(err, db){ //TODO: da rendere asincrono: http://justinklemm.com/node-js-async-tutorial/
 	var minersList = Object.keys(minerDictionary);
 	var count = minersList.length;
 	minersList.forEach(function(key){
-		var miner_id = minerDictionary[key];
-		//    count++;
-		db.collection('addresses').findOne({_id: miner_id},{'tx_payment':1, '_id':0}, function(err, miner_txs){
-			count--;
-//			console.log("count: " + count)
-//			console.log("miner_id: " + miner_id);
-//			console.log("minerstxs: " + JSON.stringify(miner_txs));
-			var tx_payment_list = miner_txs['tx_payment'];
-			//console.log(tx_payment_list);
-			if ( tx_payment_list != null && tx_payment_list.length > 0){
-				//        console.log("miner_txs presenti")
-				//        console.log(JSON.stringify(tx_payment_list))
-				tx_payment_list.forEach(function (tx_payment){
-					//console.log(tx_payment);
-					tx_payment['addressesValue_receving'].forEach(function(addressValue_receivingCouple){
-						var addressReceiving = addressValue_receivingCouple[0];
-						//                             console.log(addressReceiving)
-						if(minersList.indexOf(addressReceiving) >= 0){
-							console.log("infatti non entro")
-							if(minersInteractions[miner_id])
-								minersInteractions[miner_id].push(addressReceiving);
-							else{
-								console.log("se non stampavo prima, figurati adesso");
-								minersInteractions[miner_id] = [addressReceiving];
-							}
-						}
-					})
+	    var miner_id = minerDictionary[key];
+	//    count++;
+	    db.collection('addresses').findOne({_id: miner_id},{'tx_payment':1, '_id':0}, function(err, miner_txs){
+	      count--;
+	//      console.log("count: " + count)
+	//      console.log("miner_id: " + miner_id);
+	//      console.log("minerstxs: " + JSON.stringify(miner_txs));
+	      var tx_payment_list = miner_txs['tx_payment'];
+	      //console.log(tx_payment_list);
+	      if ( tx_payment_list != null && tx_payment_list.length > 0){
+	//        console.log("miner_txs presenti")
+	//        console.log(JSON.stringify(tx_payment_list))
+	    	tx_payment_list.forEach(function (tx_payment){
+	    		//console.log(tx_payment);
+	    		tx_payment['addressesValue_receving'].forEach(function(addressValue_receivingCouple){
+	    			var addressReceiving = addressValue_receivingCouple[0];
+//	    			console.log(addressReceiving)
+	    			if(minersList.indexOf(addressReceiving) >= 0){
+	    				console.log("infatti non entro")
+	    				if(minersInteractions[miner_id])
+	    					minersInteractions[miner_id].push(addressReceiving);
+	    				else{
+	    					console.log("se non stampavo prima, figurati adesso");
+	    					minersInteractions[miner_id] = [addressReceiving];
+	    				}
+	    			}
+	    		})
+	    		
+	    	})
+      }
+//      console.log("---------------------------\n");
 
-				})
-				if (count == 0){
-					console.log(JSON.stringify(minersInteractions))
-					console.log("links loaded")
+      if (count == 0){
+        console.log(JSON.stringify(minersInteractions))
+        console.log("links loaded")
 
-					console.log("all data are loaded")
-					createData(minerDictionary, minersInteractions);
-				}
-			}
-
-		})
-
-	})
+        console.log("all data are loaded")
+        //createData(minerDictionary, minersInteractions);
+      }
+    });
+  });
 }
 
 
