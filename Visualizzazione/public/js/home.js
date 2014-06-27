@@ -34,8 +34,8 @@ function initNodes(){
       node2Miner_inverted[ node2Miner[num]] = num
     });
     console.log(nodes)
-    // startD3JS();
-    //initLinks();
+    startD3JS();
+    initLinks();
   });
 }
 
@@ -49,6 +49,7 @@ function initLinks(){
 
   callGet('/minerInteractionsList', function(data){
     json = getJSONFromString(data);
+    console.log("json")
     console.log(json)
     hash_keys = Object.keys(json);
     hash_keys.forEach(function(hash_pay){
@@ -349,4 +350,4 @@ initLayout();
 completeSVG();
 
 redraw();
-initLinks();
+// initLinks();

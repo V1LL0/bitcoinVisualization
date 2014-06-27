@@ -87,54 +87,54 @@ function getMinerList(err, db){
 }
 
 //Crea un dizionario in cui memorizza quali minatori hanno pagati altri minatori
-function getMinersInteraction(err, db){ //TODO: da rendere asincrono: http://justinklemm.com/node-js-async-tutorial/
-  var count = 0;
-  Object.keys(minerDictionary).forEach(function(key){
-    var miner_id = minerDictionary[key];
-    count++;
-    db.collection('addresses').findOne({_id: miner_id},{'tx_payment':1, '_id':0}, function(err, miner_txs){
-      count--;
-      console.log("count: " + count)
-      console.log("miner_id: " + miner_id);
-      console.log("minerstxs: " + JSON.stringify(miner_txs));
-      address_receving = miner_txs['addressesValue_receving'];
-      if ( address_receving != null && address_receving.length > 0){
-        console.log("miner_txs presenti")
-        console.log(JSON.stringify(address_receving))
-        minersInteractions[miner_id] = address_receving;
-      }
-      console.log("---------------------------\n");
+// function getMinersInteraction(err, db){ //TODO: da rendere asincrono: http://justinklemm.com/node-js-async-tutorial/
+//   var count = 0;
+//   Object.keys(minerDictionary).forEach(function(key){
+//     var miner_id = minerDictionary[key];
+//     count++;
+//     db.collection('addresses').findOne({_id: miner_id},{'tx_payment':1, '_id':0}, function(err, miner_txs){
+//       count--;
+//       console.log("count: " + count)
+//       console.log("miner_id: " + miner_id);
+//       console.log("minerstxs: " + JSON.stringify(miner_txs));
+//       address_receving = miner_txs['addressesValue_receving'];
+//       if ( address_receving != null && address_receving.length > 0){
+//         console.log("miner_txs presenti")
+//         console.log(JSON.stringify(address_receving))
+//         minersInteractions[miner_id] = address_receving;
+//       }
+//       console.log("---------------------------\n");
 
-      if (count == 0){
-        console.log(JSON.stringify(minersInteractions))
-        console.log("links loaded")
+//       if (count == 0){
+//         console.log(JSON.stringify(minersInteractions))
+//         console.log("links loaded")
 
-        console.log("all data are loaded")
-      }
-    });
-  });
-}
+//         console.log("all data are loaded")
+//       }
+//     });
+//   });
+// }
 
 // //VERSIONE DI PROVA
-// function getMinersInteraction(err, db){
-//   function random(start, end){
-//     return parseInt(Math.random()*(end-start)) + start;
-//   }
-//   var num_links = random(100,300);
-//   dictonary_length = Object.keys(minerDictionary).length;
-//   for (var i=0; i<num_links; i++){
-//     key = random(0, dictonary_length);
-//     hash = minerDictionary[key];
-//     links = [];
-//     num_links_per_node = random(0,10);
-//     for (var j=0; j<num_links_per_node; j++)
-//       links.push( minerDictionary[random(0, dictonary_length)] );
-//     minersInteractions[hash] = links;
-//   }
+function getMinersInteraction(err, db){
+  function random(start, end){
+    return parseInt(Math.random()*(end-start)) + start;
+  }
+  var num_links = random(100,300);
+  dictonary_length = Object.keys(minerDictionary).length;
+  for (var i=0; i<num_links; i++){
+    key = random(0, dictonary_length);
+    hash = minerDictionary[key];
+    links = [];
+    num_links_per_node = random(0,10);
+    for (var j=0; j<num_links_per_node; j++)
+      links.push( minerDictionary[random(0, dictonary_length)] );
+    minersInteractions[hash] = links;
+  }
 
-//   console.log(JSON.stringify(minersInteractions));
-//   console.log("links loaded");
-// }
+  console.log(JSON.stringify(minersInteractions));
+  console.log("links loaded");
+}
 
 function initData(err, db){
   getMinerList(err, db);
