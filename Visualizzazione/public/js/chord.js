@@ -24,71 +24,15 @@ var data; /*{
 		         [1, 1, 0, 1, 1, 0]] // B doesn't depend on A or Main
 };
 */
-	var numHashM;
-	var hashto_HashList;
-
-
-function initializeData(createDataCallback, startCallback){
-	callGet('/minerList', function(data){
-									numHashM = data;
-									callGet('/minerInteractionsList', function(data){
-																		hashto_HashList = data
-																		createDataCallback(numHashM, hashto_HashList, startCallback);
-																	});
-									});
-	//{'1':'abc', '2':'bdfg', '3':'casfg', '4':'dasfg', '5':'ekiuj', '6':'fertey'};
-	//{'abc':['bdfg', 'casfg'], 'dasfg':['casfg', 'ekiuj', 'bdfg'], 'casfg':['fertey', 'abc', 'bdfg'], 
-	//'dasfg':['abc'], 'ekiuj':['abc', 'bdfg'], 'fertey':['abc', 'bdfg', 'ekiuj']};
-
-	
-
-}
 
 
 
-function createData(numberHashMap, hashto_HashList, startCallback){
-	data={
-			packageNames:[],
-			matrix: []
-	}
-	// console.log(numberHashMap);
-	// console.log(hashto_HashList);
-
-	numberHashMap = getJSONFromString(numberHashMap);
-	hashto_HashList = getJSONFromString(hashto_HashList);
-
-	data.packageNames = Object.keys(numberHashMap);
-		
-	var row = [];
-
-	data.packageNames.forEach(function(item){
-		row = []
-		data.packageNames.forEach(function(item2){	
-			if (item !== item2){
-				if(hashto_HashList[numberHashMap[item]]===undefined)
-					row.push(0);
-				else
-					if(hashto_HashList[numberHashMap[item]].indexOf(numberHashMap[item2]) > -1)
-						row.push(1);
-					else
-						row.push(0);
-			}
-			else
-				row.push(0);
-			
-		});
-
-		data.matrix.push(row);			
-
-	});
-
+callGet('/wheelData', function(dataWheel){
+	data = getJSONFromString(dataWheel);
 	start();
-
-}
-
+});
 
 
-initializeData(createData, start);
 
 
 function start(){

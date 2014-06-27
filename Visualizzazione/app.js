@@ -35,6 +35,8 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
+
+
 //ROUTES
 app.get('/', function(req, res, next){
   res.render("index");  
@@ -55,10 +57,17 @@ app.get('/minerInteractionsList', function(req, res) {
   res.end(JSON.stringify(minersInteractions));
 });
 
+app.get('/wheelData', function(req, res) {
+	  res.end(JSON.stringify(wheelData));
+});
+
 /////////MONGO////////////////
 
 var minerDictionary = {}
 var minersInteractions = {} // hash -> [hash_destinazioni]
+
+//for wheel
+var wheelData = {}
 
 // var ObjectID = mongo.ObjectID;
 var BSON = mongo.BSONPure; 
@@ -134,8 +143,70 @@ function getMinersInteraction(err, db){
 
   console.log(JSON.stringify(minersInteractions));
   console.log("links loaded");
+  createData(minerDictionary, minersInteractions);
 }
 
 function initData(err, db){
   getMinerList(err, db);
 }
+
+
+
+/*************** WHEEL ***************/
+function createData(numberHashMap, hashto_HashList){
+	wheelData={
+			packageNames:[],
+			matrix: []
+	}
+	// console.log(numberHashMap);
+	// console.log(hashto_HashList);
+
+
+	wheelData.packageNames = Object.keys(numberHashMap);
+		
+	var row = [];
+
+	wheelData.packageNames.forEach(function(item){
+		row = []
+		wheelData.packageNames.forEach(function(item2){	
+			if (item !== item2){
+				if(hashto_HashList[numberHashMap[item]]===undefined)
+					row.push(0);
+				else
+					if(hashto_HashList[numberHashMap[item]].indexOf(numberHashMap[item2]) > -1)
+						row.push(1);
+					else
+						row.push(0);
+			}
+			else
+				row.push(0);
+			
+		});
+
+		wheelData.matrix.push(row);			
+
+	});
+
+	console.log("data wheel loaded")
+}
+
+
+
+
+
+
+
+	//Prova
+	//{'1':'abc', '2':'bdfg', '3':'casfg', '4':'dasfg', '5':'ekiuj', '6':'fertey'};
+	//{'abc':['bdfg', 'casfg'], 'dasfg':['casfg', 'ekiuj', 'bdfg'], 'casfg':['fertey', 'abc', 'bdfg'], 
+	//'dasfg':['abc'], 'ekiuj':['abc', 'bdfg'], 'fertey':['abc', 'bdfg', 'ekiuj']};
+
+	
+
+
+
+
+
+
+
+
