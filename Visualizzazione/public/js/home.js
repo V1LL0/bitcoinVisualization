@@ -27,13 +27,12 @@ function callGet(path, callback){
 function initNodes(){
   callGet('/minerList', function(data){
     json = getJSONFromString(data)
-    //console.log(json)
     node2Miner = json
     Object.keys(json).forEach(function(num){
-      nodes.push({'number':num, 'x':100, 'y':100})
-      node2Miner_inverted[ node2Miner[num]] = num
+      nodes.push({'number':num, 'x':100, 'y':100});
+      node2Miner_inverted[ node2Miner[num]] = num;
     });
-    console.log(nodes)
+    
     startD3JS();
     initLinks();
   });
@@ -49,20 +48,19 @@ function initLinks(){
 
   callGet('/minerInteractionsList', function(data){
     json = getJSONFromString(data);
-    console.log("json")
-    console.log(json)
+//    console.log("json\n"+json);
     hash_keys = Object.keys(json);
     hash_keys.forEach(function(hash_pay){
       hash_credit_list = json[hash_pay]
       hash_credit_list.forEach(function(hash_credit){
-        console.log("addLink(" + node2Miner_inverted[hash_pay] + ", " + node2Miner_inverted[hash_credit] + ")")
+//        console.log("addLink(" + node2Miner_inverted[hash_pay] + ", " + node2Miner_inverted[hash_credit] + ")")
         addLink(node2Miner_inverted[hash_pay], node2Miner_inverted[hash_credit]);
         startD3JS();
       });
     })
-    // addLink(19, 30);
-    console.log(links);
-    // startD3JS();
+ 
+//    console.log("links:\n"+links);
+//    startD3JS();
   });
 
 }

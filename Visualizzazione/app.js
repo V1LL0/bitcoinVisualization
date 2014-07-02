@@ -61,10 +61,14 @@ app.get('/wheelData', function(req, res) {
 	res.end(JSON.stringify(wheelData));
 });
 
+
 /////////MONGO////////////////
 
 var minerDictionary = {}
+//var minerDictionaryInverted = {}
 var minersInteractions = {} // hash -> [hash_destinazioni]
+
+var miner_miningCountList = {};
 
 //for wheel
 var wheelData = {}
@@ -78,71 +82,122 @@ MongoClient.connect("mongodb://localhost:27017/bitcoinDB", initData);
 
 function getMinerList(err, db){
 	var num = 0;
-	db.collection('addresses').find({'_type':'address'},{'_id':1}).toArray(function(err, items) {
-		var MAX = 21000;
-		var MIN = 20000;
-//		var MIN = 0;
-		var toskip = 0;
+	db.collection('addresses').find({'_type':'address'},{'_id':1, 'miningCount':1}).toArray(function(err, items) {
+		var MAX = 100000;
+		var MIN = 0;
+
+		num = MIN;
 		items.forEach(function(miner){
 //			if (toskip>=MIN && toskip<MAX+MIN){
-			if(num<MAX-MIN){
+			if(num<MAX+MIN){
 				minerDictionary[num] = miner['_id'];
+				miner_miningCountList[miner['_id']] = miner['miningCount'];
+
 				num++;
 			}
 //			}
 //			toskip++;
 		});
-		console.log("node loaded")    
+		console.log("node loaded")
+		var recalculatedDictionary = {}
+
+
+		var newNodeIndex = 0
+		var finalNodes = [];
+		var minersIndexesList = Object.keys(minerDictionary);
+		console.log("minersIndexesListSize: "+minersIndexesList.length)
+		
+		minersIndexesList.forEach(function(item){
+			if(miner_miningCountList[minerDictionary[item]]>1)
+				finalNodes.push(minerDictionary[item]);
+		})
+
+
+		finalNodes.forEach(function(item){
+			recalculatedDictionary[newNodeIndex]=item;
+			newNodeIndex++;
+		});
+
+		console.log("Recalculated Dictionary:\n"+JSON.stringify(recalculatedDictionary));
+		minerDictionary=recalculatedDictionary;
+
 		getMinersInteraction(err, db);
 	});
 }
 
 //Crea un dizionario in cui memorizza quali minatori hanno pagati altri minatori
 function getMinersInteraction(err, db){ //TODO: da rendere asincrono: http://justinklemm.com/node-js-async-tutorial/
-	var minersList = Object.keys(minerDictionary);
-	var count = minersList.length;
-	minersList.forEach(function(key){
-	    var miner_id = minerDictionary[key];
-	//    count++;
-	    db.collection('addresses').findOne({_id: miner_id},{'tx_payment':1, '_id':0}, function(err, miner_txs){
-	      count--;
-	//      console.log("count: " + count)
-	//      console.log("miner_id: " + miner_id);
-	//      console.log("minerstxs: " + JSON.stringify(miner_txs));
-	      var tx_payment_list = miner_txs['tx_payment'];
-	      //console.log(tx_payment_list);
-	      if ( tx_payment_list != null && tx_payment_list.length > 0){
-	//        console.log("miner_txs presenti")
-	//        console.log(JSON.stringify(tx_payment_list))
-	    	tx_payment_list.forEach(function (tx_payment){
-	    		//console.log(tx_payment);
-	    		tx_payment['addressesValue_receving'].forEach(function(addressValue_receivingCouple){
-	    			var addressReceiving = addressValue_receivingCouple[0];
-//	    			console.log(addressReceiving)
-	    			if(minersList.indexOf(addressReceiving) >= 0){
-	    				console.log("infatti non entro")
-	    				if(minersInteractions[miner_id])
-	    					minersInteractions[miner_id].push(addressReceiving);
-	    				else{
-	    					console.log("se non stampavo prima, figurati adesso");
-	    					minersInteractions[miner_id] = [addressReceiving];
-	    				}
-	    			}
-	    		})
-	    		
-	    	})
-      }
-//      console.log("---------------------------\n");
+	var minersIndexsList = Object.keys(minerDictionary);
+	var count = minersIndexsList.length;
+	var minersList = [];
 
-      if (count == 0){
-        console.log(JSON.stringify(minersInteractions))
-        console.log("links loaded")
+	for (var k in minersIndexsList){
+		minersList.push(minerDictionary[k])
+	}
 
-        console.log("all data are loaded")
-        //createData(minerDictionary, minersInteractions);
-      }
-    });
-  });
+	console.log(count)
+	minersIndexsList.forEach(function(key){
+		var miner_id = minerDictionary[key];
+		//    count++;
+		db.collection('addresses').findOne({_id: miner_id},{'tx_payment':1, '_id':0}, function(err, miner_txs){
+			count--;
+			//      console.log("count: " + count)
+			//      console.log("miner_id: " + miner_id);
+			//		console.log("minerstxs: " + JSON.stringify(miner_txs));
+			var tx_payment_list = miner_txs['tx_payment'];
+			//console.log(tx_payment_list);
+			if ( tx_payment_list != null && tx_payment_list.length > 0){
+				//        console.log("miner_txs presenti")
+				//        console.log(JSON.stringify(tx_payment_list))
+				tx_payment_list.forEach(function (tx_payment){
+					//console.log(tx_payment);
+					tx_payment['addressesValue_receving'].forEach(function(addressValue_receivingCouple){
+						var addressReceiving = addressValue_receivingCouple[0];
+//						console.log(addressReceiving)
+						if(minersList.indexOf(addressReceiving) >= 0){
+//							console.log("infatti non entro")
+							if(minersInteractions[miner_id])
+								minersInteractions[miner_id].push(addressReceiving);
+							else{
+//								console.log("se non stampavo prima, figurati adesso");
+								minersInteractions[miner_id] = [addressReceiving];
+							}
+						}
+					})
+
+				})
+			}
+//			console.log("---------------------------\n");
+
+			if (count == 0){
+
+
+//				Cleaning dei nodi che non hanno interazioni 
+
+
+				//var finaNodes = Object.keys(minersInteractions);
+//				minersKeysList.forEach(function(key){
+//				minersInteractions[key].forEach(function(elem){
+//				if(finalNodes.indexOf(elem)<0)
+//				finalNodes.push(elem);						
+//				});
+//				});
+
+
+
+				console.log("---------------------------");
+				//console.log(JSON.stringify(recalculatedDictionary));
+				console.log("links loaded")
+				console.log('Nodes: '+Object.keys(minerDictionary).length);
+
+				createData(minerDictionary, minersInteractions);
+
+
+
+			}
+		});
+	});
+
 }
 
 
@@ -210,6 +265,8 @@ function createData(numberHashMap, hashto_HashList){
 	});
 
 	console.log("data wheel loaded")
+
+	console.log("all data are loaded")
 }
 
 
