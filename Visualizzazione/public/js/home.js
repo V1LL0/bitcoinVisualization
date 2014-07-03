@@ -25,7 +25,7 @@ function callGet(path, callback){
 }
 
 function initNodes(){
-  callGet('/minerList', function(data){
+  callGet('/minersList', function(data){
     json = getJSONFromString(data)
     node2Miner = json
     Object.keys(json).forEach(function(num){
@@ -46,7 +46,7 @@ function addLink(source, target){
 function initLinks(){
   
 
-  callGet('/minerInteractionsList', function(data){
+  callGet('/minersInteractionsList', function(data){
     json = getJSONFromString(data);
 //    console.log("json\n"+json);
     hash_keys = Object.keys(json);
@@ -55,12 +55,12 @@ function initLinks(){
       hash_credit_list.forEach(function(hash_credit){
 //        console.log("addLink(" + node2Miner_inverted[hash_pay] + ", " + node2Miner_inverted[hash_credit] + ")")
         addLink(node2Miner_inverted[hash_pay], node2Miner_inverted[hash_credit]);
-        startD3JS();
+//        startD3JS();
       });
     })
  
 //    console.log("links:\n"+links);
-//    startD3JS();
+    startD3JS();
   });
 
 }
