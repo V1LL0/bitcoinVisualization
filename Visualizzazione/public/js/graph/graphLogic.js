@@ -19,6 +19,29 @@ function callGet(path, callback){
   });
 }
 
+function calculateSize(miningCount){
+  var size = 0;
+  var maxMiningCount = 70;
+  var maxSize = 15;
+  if (miningCount >= maxMiningCount) return maxSize;
+  size = 1 + (miningCount/maxSize) * (maxSize-1);
+  return size;
+}
+
+
+function initNodes(){
+  callGet('/minersList', function(data){
+    json = getJSONFromString(data)
+    node2Miner = json
+    Object.keys(json).forEach(function(num){
+      var size = calculateSize(json[num]['miningCount']);
+      nodes.push({'number':num, 'x':100, 'y':100, 'size':size});
+      node2Miner_inverted[ node2Miner[num]] = num;
+    });
+    redraw();
+    initLinks();
+  });
+}
 
 function rgb2Hex(r,g,b){
  return "#" +
@@ -27,35 +50,25 @@ function rgb2Hex(r,g,b){
   ("0" + parseInt(b,10).toString(16)).slice(-2);
 }
 
-function calculateColor(miningCount){
+function calculateColor(transactionCount){
+//  var color = 0;
+  // var lightestColorValue = 220;
   var r = 0;
   var g = 0;
-  var maxMiningCount = 50;
-  if (miningCount >= maxMiningCount) return '#f00';
-  var colorPercentage = miningCount/maxMiningCount;
-
-  r = colorPercentage * 255;
-  g = (1 - colorPercentage) * 255;
-
-  return rgb2Hex(r,g,0)
+  var maxTransactionCount = 100;
+  if (transactionCount >= maxTransactionCount) return rgb2Hex(0,60,255);
+  var r_lightest = 120;
+  var g_lightest = 143;
+  // color = lightestColorValue + (transactionCount/maxTransactionCount) * (255-lightestColorValue);
+  r = 50 + r_lightest - transactionCount/maxTransactionCount * r_lightest;
+  g = 100 + (g_lightest - transactionCount/maxTransactionCount * g_lightest);
+  return rgb2Hex(r,g,255);
 }
 
-function initNodes(){
-  callGet('/minersList', function(data){
-    json = getJSONFromString(data)
-    node2Miner = json
-    Object.keys(json).forEach(function(num){
-      var color = calculateColor(json[num]['miningCount']);
-      nodes.push({'number':num, 'x':100, 'y':100, 'color':color});
-      node2Miner_inverted[ node2Miner[num]] = num;
-    });
-    redraw();
-    initLinks();
-  });
-}
-
-function addLink(source, target){
-    var link = {"source": parseInt(source), "target": parseInt(target)};
+function addLink(source, target, txCount){
+    //var color = calculateColor();
+    var color = calculateColor(txCount);
+    var link = {"source": parseInt(source), "target": parseInt(target), "color":color};
     links.push(link);
 }
 
@@ -72,6 +85,10 @@ function initLinks(){
         addLink(node2Miner_inverted[hash_pay], node2Miner_inverted[hash_credit]);
       });
     })
+
+    addLink(5,2,100);
+    addLink(5,1,1);
+    addLink(1,2,50);
  
 //    console.log("links:\n"+links);
     redraw();
@@ -91,4 +108,3 @@ initLayout();
 completeSVG();
 
 redraw();
-// initLinks();

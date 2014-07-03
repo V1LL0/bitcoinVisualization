@@ -1,6 +1,6 @@
 var width = 1024
 var height = 768
-var fill = d3.scale.category20()
+//var fill = d3.scale.category20()
 
 // mouse event vars
 var selected_node = null,
@@ -152,7 +152,8 @@ function redraw() {
   link = link.data(links);
 
   link.enter().insert("line", ".node")
-      .attr("class", "link")
+      .attr("class", "link")      
+      .style("stroke", function(d) { return d.color; })
       .on("mousedown", 
         function(d) { 
           mousedown_link = d; 
@@ -170,8 +171,7 @@ function redraw() {
 
   node.enter().insert("circle")
       .attr("class", "node")
-      .attr("r", 5)
-      .style("fill", function(d) { return d.color; })
+      .attr("r", function(d) { return d.size; })
       .on("mousedown", function(d) { 
           // disable zoom
           vis.call(d3.behavior.zoom().on("zoom"), null);
@@ -181,7 +181,7 @@ function redraw() {
           else selected_node = mousedown_node; 
           selected_link = null; 
 
-          console.log("selezionato il nodo " + JSON.stringify(selected_node))
+          console.log("selezionato il nodo " + selected_node['number'] + " " + JSON.stringify(node2Miner[selected_node['number']]))
 
           // reposition drag line
           drag_line
@@ -219,7 +219,7 @@ function redraw() {
     .transition()
       .duration(750)
       .ease("elastic")
-      .attr("r", 6.5);
+      //.attr("r", 6.5);
 
   node.exit().transition()
       .attr("r", 0)
