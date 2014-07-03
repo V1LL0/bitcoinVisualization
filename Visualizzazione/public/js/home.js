@@ -1,5 +1,5 @@
-var width = 2024
-var height = 800
+var width = 1024
+var height = 768
 var fill = d3.scale.category20()
 
 var node2Miner = {}
@@ -24,15 +24,35 @@ function callGet(path, callback){
   });
 }
 
+function rgb2Hex(r,g,b){
+ return "#" +
+  ("0" + parseInt(r,10).toString(16)).slice(-2) +
+  ("0" + parseInt(g,10).toString(16)).slice(-2) +
+  ("0" + parseInt(b,10).toString(16)).slice(-2);
+}
+
+function calculateColor(miningCount){
+  var r = 0;
+  var g = 0;
+  var maxMiningCount = 50;
+  if (miningCount >= maxMiningCount) return '#f00';
+  var colorPercentage = miningCount/maxMiningCount;
+
+  r = colorPercentage * 255;
+  g = (1 - colorPercentage) * 255;
+
+  return rgb2Hex(r,g,0)
+}
+
 function initNodes(){
   callGet('/minersList', function(data){
     json = getJSONFromString(data)
     node2Miner = json
     Object.keys(json).forEach(function(num){
-      nodes.push({'number':num, 'x':100, 'y':100});
+      var color = calculateColor(json[num]['miningCount']);
+      nodes.push({'number':num, 'x':100, 'y':100, 'color':color});
       node2Miner_inverted[ node2Miner[num]] = num;
     });
-    
     startD3JS();
     initLinks();
   });
@@ -243,6 +263,7 @@ function redraw() {
   node.enter().insert("circle")
       .attr("class", "node")
       .attr("r", 5)
+      .style("fill", function(d) { return d.color; })
       .on("mousedown", function(d) { 
           // disable zoom
           vis.call(d3.behavior.zoom().on("zoom"), null);
@@ -252,7 +273,7 @@ function redraw() {
           else selected_node = mousedown_node; 
           selected_link = null; 
 
-          console.log("selezionato il nodo " + selected_node['number'])
+          console.log("selezionato il nodo " + JSON.stringify(selected_node))
 
           // reposition drag line
           drag_line
