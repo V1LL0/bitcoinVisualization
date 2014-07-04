@@ -148,6 +148,8 @@ function getMinersInteraction(err, db){ //TODO: da rendere asincrono: http://jus
 }
 
 
+
+
 function initData(err, db){
 	getMinerList(err, db);
 }

@@ -2,8 +2,8 @@ var GraphD3Visualization = function(div_name){
 
   var node2Miner = {}
 
-  var width = 1024
-  var height = 768
+  var width = 800
+  var height = 600
   //var fill = d3.scale.category20()
 
   // mouse event vars
@@ -44,13 +44,19 @@ var GraphD3Visualization = function(div_name){
         .on("dblclick.zoom", null)
       .append('svg:g')
         //.on("mousemove", mousemove)
-        .on("mousedown", mousedown)
+        .on("mousedown", removeSelected)
         //.on("mouseup", mouseup);
 
     vis.append('svg:rect')
         .attr('width', width)
         .attr('height', height)
         .attr('fill', 'white');
+  }
+
+  function removeSelected(){
+    // selected_link = null;
+    // selected_node = null;
+    // // redraw();
   }
 
   var initLayout = function(){
@@ -66,12 +72,12 @@ var GraphD3Visualization = function(div_name){
 
   var completeSVG = function(){
   // line displayed when dragging new nodes
-    drag_line = vis.append("line")
-        .attr("class", "drag_line")
-        .attr("x1", 0)
-        .attr("y1", 0)
-        .attr("x2", 0)
-        .attr("y2", 0);
+    // drag_line = vis.append("line")
+    //     .attr("class", "drag_line")
+    //     .attr("x1", 0)
+    //     .attr("y1", 0)
+    //     .attr("x2", 0)
+    //     .attr("y2", 0);
 
     // get layout properties
     nodes = force.nodes();
@@ -96,11 +102,11 @@ var GraphD3Visualization = function(div_name){
     if (!mousedown_node) return;
 
     // update drag line
-    drag_line
-        .attr("x1", mousedown_node.x)
-        .attr("y1", mousedown_node.y)
-        .attr("x2", d3.svg.mouse(this)[0])
-        .attr("y2", d3.svg.mouse(this)[1]);
+    // drag_line
+    //     .attr("x1", mousedown_node.x)
+    //     .attr("y1", mousedown_node.y)
+    //     .attr("x2", d3.svg.mouse(this)[0])
+    //     .attr("y2", d3.svg.mouse(this)[1]);
 
   }
 
@@ -171,6 +177,8 @@ var GraphD3Visualization = function(div_name){
             if (mousedown_link == selected_link) selected_link = null;
             else selected_link = mousedown_link; 
             selected_node = null; 
+            console.log("selezionato l'arco (" + selected_link['source']['number'] + ", " + selected_link['target']['number'] + ")")
+
             redraw(); 
           })
 
