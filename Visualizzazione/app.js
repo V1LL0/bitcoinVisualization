@@ -57,6 +57,10 @@ app.get('/minersInteractionsList', function(req, res) {
 	res.end(JSON.stringify(minersInteractionsDictionary));
 });
 
+app.get('/time2CollaborativeMiners', function(req, res) {
+	res.end(JSON.stringify(time2CollaborativeMiners));
+});
+
 app.get('/wheelData', function(req, res) {
 	res.end(JSON.stringify(wheelData));
 });
@@ -75,8 +79,9 @@ Object.values = function(obj){
 
 /////////MONGO////////////////
 
-var minersDictionary = {}
+var minersDictionary = {} // int -> hash
 var minersInteractionsDictionary = {} // hash -> [hash_destinazioni]
+var time2CollaborativeMiners = {} // timestamp -> { size:int, miners:minser_list }
 
 var miner_miningCountList = {};
 var miningCountThreshold = 2; 
@@ -137,8 +142,7 @@ function getMinersInteraction(err, db){ //TODO: da rendere asincrono: http://jus
 			}
 			if (count == 0){
 				console.log("links loaded")
-				console.log('Nodes: '+Object.keys(minersDictionary).length);
-				console.log("all data are loaded")
+				getCollaborativeMiners(err, db);
 //				createData(minersDictionary, minersInteractionsDictionary);
 				
 			}
@@ -147,12 +151,35 @@ function getMinersInteraction(err, db){ //TODO: da rendere asincrono: http://jus
 
 }
 
+function getCollaborativeMiners(err, db){
+	db.collection('transactions').find({"addressesValue_sending":{"$size":0}},{"addressesValue_receving":1, "_id":0, "time":1}).toArray(function(err, addressesValueReceiving_time_list) {
+		
+		// console.log(JSON.stringify(addressesValueReceiving_time_list))
+		addressesValueReceiving_time_list.forEach(function(addressesValueReceiving_time){
+			var time = addressesValueReceiving_time['time'];
+			var addressValueReceivingList = addressesValueReceiving_time['addressesValue_receving'];
+			addressValueReceivingList.forEach(function(addressValueReceiving){
+				var addressReceiving = addressValueReceiving[0];
 
+				if(time2CollaborativeMiners[time]){
+					collaborativeMiners = time2CollaborativeMiners[time]
+					collaborativeMiners['size'] = collaborativeMiners['size']+1
+					collaborativeMiners['miners'].push(addressReceiving);
+				}
+				else{
+					time2CollaborativeMiners[time] = {"size":1, "miners":[addressReceiving]};
+				}
+			})
+		})
+		console.log("all data are loaded")
+	});
+}
 
 
 function initData(err, db){
 	getMinerList(err, db);
 }
+
 
 
 /*
