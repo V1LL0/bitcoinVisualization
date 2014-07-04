@@ -97,10 +97,6 @@ function initLinks(){
 }
 
 
-
-
-
-
 initNodes();
 initSvg();
 addInteractionEvents();
@@ -108,3 +104,5 @@ initLayout();
 completeSVG();
 
 redraw();
+
+
