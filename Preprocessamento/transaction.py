@@ -25,7 +25,7 @@ class Transaction:
 				tx_in = getJSONTransactionFromID(vin['txid'])
 				prec_vout = tx_in['vout'][index]
 				for address in prec_vout['scriptPubKey']['addresses']:
-					value_in = value_in + vout['value']
+					value_in = value_in + prec_vout['value']
 					addressesValue_sending.append( (str(address), prec_vout['value']) ) 
 		except KeyError:
 			#Potrebbe essere una transazione zero

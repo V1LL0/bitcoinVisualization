@@ -40,57 +40,65 @@ class BitcoinParser:
 	def startParsing(self, start, maxBlockNum):
 
 		for i in range(start, start+maxBlockNum):
+			if(i==300000):
+				return
+
 			print "Leggo il blocco: "+str(i)+" | "+str(i-start+1) + "/" + str(maxBlockNum)
 
- 			block = getBlock(i)
+			block = getBlock(i)
 			tx = Transaction(block['tx'][0], block['time'])
 
 			#I miner vengono creati solo per la tx0
 			for address in tx.addressesValue_receving:
 				if address[0] in self.minersAddress:
-					#print "Stesso minatore " + address[0]
-					address_obj = self.dao.getAddress(address[0])
-					address_obj.addNewMining(tx, address[1])
-					self.dao.updateAddress(address_obj, tx)
+					print "Stesso minatore " + address[0]
+					self.dao.insertMining(str(address[0]), tx)
+					# address_obj = self.dao.getAddress(address[0])
+					# address_obj.addNewMining(tx, address[1])
+					# self.dao.updateAddress(address_obj, tx)
 				else:
-					#print "Minatore nuovo " + address[0]
+					print "Minatore nuovo " + address[0]
 					address_obj = Address(str(address[0]), self.bitcoinToDollar)
 					address_obj.addNewMining(tx, address[1])
 					self.minersAddress.append(address[0])
 					self.dao.insertAddress(address_obj, tx)
-			
-			
-			#Le altre transazioni aggiungono informazioni
-			for tx_index in range(1, len(block['tx'])):
-				try:
-					tx = block['tx'][tx_index]
-					tx_obj = Transaction(tx, block['time'])
-				
-					print("TX_OBJECT.SENDING: " + str(tx_obj.addressesValue_sending))
-					miners = self.getAllMinerFromList(tx_obj.addressesValue_sending)  #filtrare la lista in python
-					if ( len(miners) > 0):
-						#print("TX_OBJECT.SENDING: " + str(tx_obj.addressesValue_sending))
-						for miner in miners:
-							print("A CI SO' ENTRATO QUA!, SENDING")
-							address_obj = self.dao.getAddress(miner)
-							#print "A CI SO' ENTRATO QUA!, SENDING - aggiungo un payment a: " + address_obj._id
-							address_obj.addNewPayment(tx_obj)
-							self.dao.updateAddress(address_obj, tx_obj)
+
+			# #Le altre transazioni aggiungono informazioni
+			# print "lengBlock"+str(len(block['tx']))
+			# for tx_index in range(1, len(block['tx'])):
+			# 	try:
+			# 		tx = block['tx'][tx_index]
+			# 		tx_obj = Transaction(tx, block['time'])
+
+			# 		print tx_obj._id
+			# 		#print("TX_OBJECT.SENDING: " + str(tx_obj.addressesValue_sending))
+			# 		miners = self.getAllMinerFromList(tx_obj.addressesValue_sending)  #filtrare la lista in python
+			# 		if ( len(miners) > 0):
+			# 			print("TX_OBJECT.SENDING: " + str(tx_obj.addressesValue_sending))
+			# 			for miner in miners:
+			# 				print miner
+			# 				#print("A CI SO' ENTRATO QUA!, SENDING")
+			# 				#address_obj = self.dao.getAddress(miner)
+			# 				self.dao.insertPayment(miner, tx_obj)
+			# 				print "A CI SO' ENTRATO QUA!, SENDING - aggiungo un payment a: " + miner
+			# 				#address_obj.addNewPayment(tx_obj)
+			# 				#self.dao.updateAddress(address_obj, tx_obj)
 
 
-					print("TX_OBJECT.RECEIVING: " + str(tx_obj.addressesValue_receving))
-					miners = self.getAllMinerFromList(tx_obj.addressesValue_receving) #filtrare la lista in python
-					if ( len(miners) > 0):
-						#print("TX_OBJECT.RECEIVING: " + str(tx_obj.addressesValue_receving))
-						for miner in miners:
-							print("A CI SO' ENTRATO QUA!, RECEIVING")
-							address_obj = self.dao.getAddress(miner)
-							#print "A CI SO' ENTRATO QUA!, RECEIVING - aggiungo un credit a: " + address_obj._id
-							address_obj.addNewCredit(tx_obj)
-							self.dao.updateAddress(address_obj, tx_obj)
-				except KeyError:
-					#salta la transazione
-					a = 0 #non fare nulla
+			# 		#print("TX_OBJECT.RECEIVING: " + str(tx_obj.addressesValue_receving))
+			# 		miners = self.getAllMinerFromList(tx_obj.addressesValue_receving) #filtrare la lista in python
+			# 		if ( len(miners) > 0):
+			# 			print("TX_OBJECT.RECEIVING: " + str(tx_obj.addressesValue_receving))
+			# 			for miner in miners:
+			# 				#print("A CI SO' ENTRATO QUA!, RECEIVING")
+			# 				#address_obj = self.dao.getAddress(miner)
+			# 				self.dao.insertCredit(miner, tx_obj)
+			# 				print "A CI SO' ENTRATO QUA!, RECEIVING - aggiungo un credit a: " + miner
+			# 				#address_obj.addNewCredit(tx_obj)
+			# 				#self.dao.updateAddress(address_obj, tx_obj)
+			# 	except KeyError:
+			# 		#salta la transazione
+			# 		a = 0 #non fare nulla
 
 
 

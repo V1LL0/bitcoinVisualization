@@ -21,6 +21,7 @@ class Dao:
 		# self.dropDB()
 		# self.db = self.client['bitcoinDB']
 
+
 	def insertAddress(self, address, tx):
 		# self.db.addresses.insert(self.encode_address(address))
 		# self.db.transactions.insert(self.encode_transaction(tx))
@@ -137,4 +138,15 @@ class Dao:
 
 		return transaction
 
+
+
+
+	def insertMining(self, address, mining):
+		self.db.addresses.update({ "_id": address },{ "$addToSet": { "tx_mining": self.encode_transaction(mining)  } })
+
+	def insertPayment(self, address, payment):
+		self.db.addresses.update({ "_id": address },{ "$addToSet": { "tx_payment": self.encode_transaction(payment) } })
+
+	def insertCredit(self, address, credit):
+		self.db.addresses.update({ "_id": address },{ "$addToSet": { "tx_credit": self.encode_transaction(credit) } })
 

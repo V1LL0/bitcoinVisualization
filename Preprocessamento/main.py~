@@ -32,7 +32,7 @@ start_time = time.time()
 parser = BitcoinParser()
 start = getLastBlock()
 #start = 155000 
-maxBlockNum = 2500
+maxBlockNum = 200000
 try:
   parser.startParsing(start, maxBlockNum)
   saveBlockNum(start+maxBlockNum)
