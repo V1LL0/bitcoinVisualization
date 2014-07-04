@@ -11,7 +11,7 @@ body {
 
 .node {
   fill: #000;
-  cursor: crosshair;
+  /**cursor: crosshair;**/
 }
 
 .node_selected {
@@ -34,7 +34,7 @@ body {
 .link {
   stroke: #999;
   stroke-width: 2;
-  cursor: crosshair;
+  /**cursor: crosshair;**/
 }
 
 .link_selected {
