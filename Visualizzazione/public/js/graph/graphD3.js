@@ -57,7 +57,7 @@ var GraphD3Visualization = function(div_name){
     force = d3.layout.force()
         .size([width, height])
         .nodes(nodesList) 
-        .linkDistance(50)
+        .linkDistance(5000)
         .charge(-200)
         .on("tick", tick);
   }

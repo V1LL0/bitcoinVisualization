@@ -98,8 +98,9 @@ MongoClient.connect("mongodb://localhost:27017/bitcoinDB", initData);
 
 function getMinerList(err, db){
 	var num = 0;
-
-	db.collection('addresses').find({'miningCount' : {$gt:miningCountThreshold}},{'_id':1, 'miningCount':1}).toArray(function(err, items) {
+	var resultsLimit = 100;
+	
+	db.collection('addresses').find(/*{'miningCount' : {$gt:miningCountThreshold}},*/{},{'_id':1, 'miningCount':1}).limit(resultsLimit).toArray(function(err, items) {
 
 		items.forEach(function(miner){
 			minersDictionary[num] = {"_id" : miner['_id'], "miningCount" : miner['miningCount']};
@@ -117,10 +118,8 @@ function getMinersInteraction(err, db){ //TODO: da rendere asincrono: http://jus
 	var minersIndexsList = Object.keys(minersDictionary);
 	var minersHashesList = Object.values(minersDictionary);
 	var count = minersIndexsList.length;
-
 	minersIndexsList.forEach(function(key){
 		var miner = minersDictionary[key];
-		
 		db.collection('addresses').findOne({_id: miner['_id']},{'tx_payment':1, '_id':0}, function(err, miner_txs){
 			count--;
 			var tx_payment_list = miner_txs['tx_payment'];
@@ -152,7 +151,8 @@ function getMinersInteraction(err, db){ //TODO: da rendere asincrono: http://jus
 }
 
 function getCollaborativeMiners(err, db){
-	db.collection('transactions').find({"addressesValue_sending":{"$size":0}},{"addressesValue_receving":1, "_id":0, "time":1}).toArray(function(err, addressesValueReceiving_time_list) {
+	var resultsLimit = 100000
+	db.collection('transactions').find({"addressesValue_sending":{"$size":0}},{"addressesValue_receving":1, "_id":0, "time":1}).limit(resultsLimit).toArray(function(err, addressesValueReceiving_time_list) {
 		
 		// console.log(JSON.stringify(addressesValueReceiving_time_list))
 		addressesValueReceiving_time_list.forEach(function(addressesValueReceiving_time){
