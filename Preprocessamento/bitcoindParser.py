@@ -59,9 +59,9 @@ class BitcoinParser:
 				else:
 					print "Minatore nuovo " + address[0]
 					address_obj = Address(str(address[0]), self.bitcoinToDollar)
-					address_obj.addNewMining(tx, address[1])
-					self.minersAddress.append(address[0])
 					self.dao.insertAddress(address_obj, tx)
+					self.dao.insertMining(str(address[0]), tx)
+					self.minersAddress.append(address[0])
 
 			# #Le altre transazioni aggiungono informazioni
 			# print "lengBlock"+str(len(block['tx']))
@@ -136,5 +136,5 @@ class BitcoinParser:
 	# 		fileOut.write(str(miner) +  " : " + str(value) + "\n")
 	# 	fileOut.close()
 
-	 	
+
 
