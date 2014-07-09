@@ -29,8 +29,14 @@ class Dao:
 		self.db.transactions.update({"_id" : tx._id}, self.encode_transaction(tx),upsert=True)
 
 	def getAddress(self, address_hash):
+		#print "address_hash: "+str(address_hash)
 		#return self.db.addresses.find_one({"_id" : address_hash})
 		return self.decode_address( self.db.addresses.find({"_id" : address_hash})[0] )
+
+	def getTransaction(self, tx_id):
+		return self.decode_transaction(self.db.transactions.find({"_id" : tx_id}))
+
+
 
 	def updateAddress(self, address, tx):
 		self.db.addresses.update({"_id" : address._id}, self.encode_address(address))
@@ -49,6 +55,39 @@ class Dao:
 		return objList2StringList( self.db.addresses.find({},{"_id":1}) )
 
 
+
+	def calculateFee(self, tx):
+		if tx.value_in > 0:
+			return tx.value_in - tx.value_out
+		
+		profit = float(50)
+		while True:
+			fee = tx.value_out - profit
+			profit = profit / 2
+			if fee >= 0:
+				return fee	
+
+
+	def insertMining(self, address, mining):
+		self.db.addresses.update({ "_id": address },{ "$addToSet": { "tx_mining": self.encode_transaction(mining)  },
+													  "$inc": { "miningCount": 1 },
+													  "$inc": { "totFees": self.calculateFee(mining) }
+													  })
+
+	def insertPayment(self, address, payment):
+		self.db.addresses.update({ "_id": address },{ "$addToSet": { "tx_payment": self.encode_transaction(payment) },
+													"$inc": { "currentBitCoin": -payment.value_out } })
+
+	def insertCredit(self, address, credit):
+		self.db.addresses.update({ "_id": address },{ "$addToSet": { "tx_credit": self.encode_transaction(credit) },
+													"$inc": { "currentBitCoin": credit.value_in } })
+
+
+
+
+
+
+
 	def dropDB(self):
 		self.db._command({'dropDatabase' : 1})
 
@@ -59,18 +98,17 @@ class Dao:
 			if isinstance(o, ObjectId):
 				return str(o)
 
-
 		txMining = []
 		for txM in address.tx_mining:
-			txMining.append(self.encode_transaction(txM))
+			txMining.append(txM._id)
 
 		txPayement=[]
 		for txP in address.tx_payment:
-			txPayement.append(self.encode_transaction(txP))
+			txPayement.append(txP._id)
 
 		txCredit=[]
 		for txC in address.tx_credit:
-			txCredit.append(self.encode_transaction(txC))
+			txCredit.append(txC._id)
 
 		return {"_type" : "address", \
 				"_id" : address._id, \
@@ -84,69 +122,94 @@ class Dao:
 				"totFees" : address.totFees}
 
 
+# 	def decode_address(self, document):
+# 		assert document["_type"] == "address"
+# 		address = Address(document['_id'], self.converter)
+# 		address.miningCount = document["miningCount"]
+# 		
+# 		for txM in document['tx_mining']:
+# 			address.tx_mining.append(self.getTransaction(txM))
+# 
+# 		for txP in document['tx_payment']:
+# 			address.tx_payment.append(self.getTransaction(txP))
+# 	
+# 		for txC in document['tx_credit']:
+# 			address.tx_credit.append(self.getTransaction(txC))
+# 	
+# 		address.totBitCoinMined = document['totBitCoinMined']
+# 		address.totDollarMined = document['totDollarMined']
+# 		address.currentBitCoin = document['currentBitCoin']
+# 		address.totFees = document['totFees']
+# 
+# 		return address
+
+
 	def decode_address(self, document):
-		assert document["_type"] == "address"
-		address = Address(document['_id'], self.converter)
-		address.miningCount = document["miningCount"]
-		
-		for txM in document['tx_mining']:
-			address.tx_mining.append(self.decode_transaction(txM))
-
-		for txP in document['tx_payment']:
-			address.tx_payment.append(self.decode_transaction(txP))
+			assert document["_type"] == "address"
+			address = Address(document['_id'], self.converter)
+			address.miningCount = document["miningCount"]
 	
-		for txC in document['tx_credit']:
-			address.tx_credit.append(self.decode_transaction(txC))
+			print "decode1"
+			for txM in document['tx_mining']:
+				address.tx_mining.append(self.decode_transaction(txM))
+			print "decode2"
+			for txP in document['tx_payment']:
+				address.tx_payment.append(self.decode_transaction(txP))
+			print "decode3"
+			for txC in document['tx_credit']:
+				address.tx_credit.append(self.decode_transaction(txC))
+			print "decode4"
+			address.totBitCoinMined = document['totBitCoinMined']
+			address.totDollarMined = document['totDollarMined']
+			address.currentBitCoin = document['currentBitCoin']
+			address.totFees = document['totFees']
+			print "decode5"
+			return address
 	
-		address.totBitCoinMined = document['totBitCoinMined']
-		address.totDollarMined = document['totDollarMined']
-		address.currentBitCoin = document['currentBitCoin']
-		address.totFees = document['totFees']
-
-		return address
-
+	
 	def encode_transaction(self, transaction):
-
-		def default(self, o):
-			if isinstance(o, ObjectId):
-				return str(o)
-
-		addressesValueReceving=[]
-		for avR in transaction.addressesValue_receving:
-			addressesValueReceving.append(avR)
-
-		addressesValueSending=[]
-		for avS in transaction.addressesValue_sending:
-			addressesValueSending.append(avS)
-
-		return {"_type" : "transaction", \
-				"_id" : transaction._id, \
-				"time" : transaction.time, \
-				"value_in" : transaction.value_in,\
-				"value_out" : transaction.value_out, \
-				"addressesValue_receving" : addressesValueReceving,\
-				"addressesValue_sending" : addressesValueSending}
-
-
+	
+			def default(self, o):
+				if isinstance(o, ObjectId):
+					return str(o)
+	
+			addressesValueReceving=[]
+			for avR in transaction.addressesValue_receving:
+				addressesValueReceving.append(avR)
+	
+			addressesValueSending=[]
+			for avS in transaction.addressesValue_sending:
+				addressesValueSending.append(avS)
+	
+			return {"_type" : "transaction", \
+					"_id" : transaction._id, \
+					"time" : transaction.time, \
+					"value_in" : transaction.value_in,\
+					"value_out" : transaction.value_out, \
+					"addressesValue_receving" : addressesValueReceving,\
+					"addressesValue_sending" : addressesValueSending}
+	
+	
 	def decode_transaction(self, document):
-		assert document["_type"] == "transaction"
-		transaction = Transaction(document['_id'], document["time"])
-		transaction.value_in = document['value_in']
-		transaction.value_out = document['value_out']
-		transaction.addressesValue_receving = document['addressesValue_receving']
-		transaction.addressesValue_sending = document['addressesValue_sending']
+			assert document["_type"] == "transaction"
+			print "dectransact1"
+			printJson(document)
+			transaction = Transaction(document)#document['_id'], document["time"])
+			print "dectransact2"
+			transaction.value_in = document['value_in']
+			print "dectransact3"
+			transaction.value_out = document['value_out']
+			print "dectransact4"
+			transaction.addressesValue_receving = document['addressesValue_receving']
+			print "dectransact5"
+			transaction.addressesValue_sending = document['addressesValue_sending']
+			print "dectransact6"
+	
+			return transaction
 
-		return transaction
 
 
 
 
-	def insertMining(self, address, mining):
-		self.db.addresses.update({ "_id": address },{ "$addToSet": { "tx_mining": self.encode_transaction(mining)  } })
 
-	def insertPayment(self, address, payment):
-		self.db.addresses.update({ "_id": address },{ "$addToSet": { "tx_payment": self.encode_transaction(payment) } })
-
-	def insertCredit(self, address, credit):
-		self.db.addresses.update({ "_id": address },{ "$addToSet": { "tx_credit": self.encode_transaction(credit) } })
-
+	

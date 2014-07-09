@@ -43,7 +43,7 @@ class BitcoinParser:
 			if(i==300000):
 				return
 
-			print "Leggo il blocco: "+str(i)+" | "+str(i-start+1) + "/" + str(maxBlockNum)
+			print "Leggo il blocco: "+str(i) + "/" + str(maxBlockNum) + " | " + str(i-start+1)
 
 			block = getBlock(i)
 			tx = Transaction(block['tx'][0], block['time'])
