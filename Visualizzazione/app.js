@@ -12,6 +12,17 @@ var mongo = require('mongodb');
 
 var app = express();
 
+var async = require('async');
+
+/*********************** FILTRO TIMESTAMP **********************/
+
+var blockTimeStampMin = 1293002065;
+var blockTimeStampMax = 1304145665;//999999999999999999999999;//1261969665;
+
+/***************************************************************/
+
+
+
 //all environments
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
@@ -58,13 +69,23 @@ app.get('/minersInteractionsList', function(req, res) {
 	res.end(JSON.stringify(minersInteractionsDictionary));
 });
 
-app.get('/time2CollaborativeMiners', function(req, res) {
-	res.end(JSON.stringify(time2CollaborativeMiners));
+app.get('/time2CollaborativeMiners/:min?/:max?', function(req, res) {
+	if(req.params.min && req.params.max){
+		blockTimeStampMin = parseInt(req.params.min);
+		blockTimeStampMax = parseInt(req.params.max);
+
+		getCollaborativeMiners(null, dataBase, res);
+		
+
+	}
+	else
+		res.end(JSON.stringify(time2CollaborativeMiners));
 });
 
 app.get('/wheelData', function(req, res) {
 	res.end(JSON.stringify(wheelData));
 });
+
 
 /////////UTILITIES///////////
 
@@ -94,8 +115,13 @@ var wheelData = {}
 var BSON = mongo.BSONPure; 
 
 var MongoClient = require('mongodb').MongoClient;
-
+var dataBase = "";
 MongoClient.connect("mongodb://localhost:27017/bitcoinDB", initData);
+
+/***************************************************************/
+/*************************   FILTRI   **************************/
+/***************************************************************/
+
 
 function getMinerList(err, db){
 	var num = 0;
@@ -151,29 +177,33 @@ function getMinersInteraction(err, db){ //TODO: da rendere asincrono: http://jus
 
 }
 
-function getCollaborativeMiners(err, db){
-	var resultsLimit = 150000
+function getCollaborativeMiners(err, db, res){
+	var resultsLimit = 100000;
+	time2CollaborativeMiners = {};
+
 	db.collection('transactions').find({"addressesValue_sending":{"$size":0}},{"addressesValue_receving":1, "_id":0, "time":1}).limit(resultsLimit).toArray(function(err, addressesValueReceiving_time_list) {
 
 		// console.log(JSON.stringify(addressesValueReceiving_time_list))
 		addressesValueReceiving_time_list.forEach(function(addressesValueReceiving_time){
 			var time = addressesValueReceiving_time['time'];
-			var addressValueReceivingList = addressesValueReceiving_time['addressesValue_receving'];
-			addressValueReceivingList.forEach(function(addressValueReceiving){
-				var addressReceiving = addressValueReceiving[0];
+			if(time >= blockTimeStampMin && time <= blockTimeStampMax){
+				var addressValueReceivingList = addressesValueReceiving_time['addressesValue_receving'];
+				addressValueReceivingList.forEach(function(addressValueReceiving){
+					var addressReceiving = addressValueReceiving[0];
 
-				if(time2CollaborativeMiners[time]){
-					collaborativeMiners = time2CollaborativeMiners[time];
-					collaborativeMiners['size'] = collaborativeMiners['size']+1;
-					collaborativeMiners['miners'].push(addressReceiving);
-				}
-				else{
-					time2CollaborativeMiners[time] = {"size":1, "miners":[addressReceiving]};
-				}
-			})
+					if(time2CollaborativeMiners[time]){
+						collaborativeMiners = time2CollaborativeMiners[time];
+						collaborativeMiners['size'] = collaborativeMiners['size']+1;
+						collaborativeMiners['miners'].push(addressReceiving);
+					}
+					else{
+						time2CollaborativeMiners[time] = {"size":1, "miners":[addressReceiving]};
+					}
+				})
+			}
 		})
 		//Salvataggio file CSV
-/*		var csv = "ADDRESSES";
+		/*		var csv = "ADDRESSES";
 		var allTimeStamps = Object.keys(time2CollaborativeMiners);
 		var allMiners = [];
 
@@ -207,7 +237,7 @@ function getCollaborativeMiners(err, db){
 
 		//da togliere
 		//time2CollaborativeMinersFiltered = time2CollaborativeMiners;
-/*		for(var i=0; i<allMiners.length; i++){
+		/*		for(var i=0; i<allMiners.length; i++){
 			var count=0;
 			csv=allMiners[i];
 			for(var j=0; j<allTimeStampsFiltered.length; j++){
@@ -220,16 +250,20 @@ function getCollaborativeMiners(err, db){
 			}
 			//finita riga
 			writer.write(csv+", "+count+"\n");*/
-			//console.log(csv+", "+count+"\n");
+		//console.log(csv+", "+count+"\n");
 		//}
-
-
-		console.log("all data loaded")
+		if(res!== undefined){
+			res.end(JSON.stringify(time2CollaborativeMiners));
+		}
+		console.log("all data loaded");
 	});
+	
+	
 }
 
 
 function initData(err, db){
+	dataBase = db;
 	getMinerList(err, db);
 }
 
@@ -273,6 +307,6 @@ function createData(numberHashMap, hashto_HashList){
 
 	console.log("data wheel loaded")
 
-	console.log("all data are loaded")
+	console.log("all data loaded")
 }
   */

@@ -136,9 +136,8 @@ function generateAllCollaborativeLinks(newNodes){
 			addCollaborativeLink(newNodes[i], newNodes[j], "red")
 		}
 	}
-	
-}
 
+}
 
 
 function initCollaborativeGraph(graphVisulization){
@@ -147,10 +146,15 @@ function initCollaborativeGraph(graphVisulization){
 	}
 
 	var num = 0;
+	var collaborativeGraphCall = '/time2CollaborativeMiners';
 
-	callGet('/time2CollaborativeMiners', function(data){
+	try{
+		collaborativeGraphCall = '/time2CollaborativeMiners'+'/'+$( "#slider-range" ).slider( "option", "values" )[0]+'/'+$( "#slider-range" ).slider( "option", "values" )[1];
+	}catch(err){
+		collaborativeGraphCall = '/time2CollaborativeMiners';
+	}
+	callGet(collaborativeGraphCall, function(data){
 		json = getJSONFromString(data);
-
 		times = Object.keys(json);
 		times.forEach(function(time){
 			if (json[time]['miners'].length > 1){
@@ -172,7 +176,7 @@ function initCollaborativeGraph(graphVisulization){
 				//Mettere i link
 				generateAllCollaborativeLinks(newNodesList);
 
-			
+
 			}
 
 
@@ -187,11 +191,32 @@ function initCollaborativeGraph(graphVisulization){
 
 
 
-var graphVisulization = new GraphD3Visualization("#visualization");
+/*var graphVisulization = new GraphD3Visualization("#visualization");
 graphVisulization.init();
-initGraphNodes(graphVisulization);
+initGraphNodes(graphVisulization);*/
 
 var collaborativeGraphVisulization = new GraphD3Visualization("#collaborativeGraph");
 collaborativeGraphVisulization.init();
 initCollaborativeGraph(collaborativeGraphVisulization);
+
+
+
+
+function recallCollaborativeGraph(){
+	collaborativeNode2Miner={};
+	miner2collaborativeNode={};
+	collaborativeNodes=[];
+	collaborativeLinks=[];
+	
+	collaborativeGraphVisulization.setNodes(collaborativeNodes);
+	collaborativeGraphVisulization.setNode2Miner(collaborativeNode2Miner);
+	collaborativeGraphVisulization.setLinks(collaborativeLinks);
+	
+	
+	collaborativeGraphVisulization.redraw();
+	
+	initCollaborativeGraph(collaborativeGraphVisulization);
+
+}
+
 
