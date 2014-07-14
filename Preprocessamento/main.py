@@ -35,7 +35,7 @@ start = getLastBlock()
 maxBlockNum = 300000
 try:
   parser.startParsing(start, maxBlockNum)
-  saveBlockNum(start+maxBlockNum)
+  saveBlockNum(maxBlockNum)
   end = int(time.time() - start_time)
   printTime(end)
 except ValueError:

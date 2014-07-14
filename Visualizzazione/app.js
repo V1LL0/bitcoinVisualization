@@ -69,10 +69,10 @@ app.get('/minersInteractionsList', function(req, res) {
 	res.end(JSON.stringify(minersInteractionsDictionary));
 });
 
-app.get('/time2CollaborativeMiners/:min?/:max?', function(req, res) {
-	if(req.params.min && req.params.max){
-		blockTimeStampMin = parseInt(req.params.min);
-		blockTimeStampMax = parseInt(req.params.max);
+app.get('/time2CollaborativeMiners', function(req, res) {
+	if(req.query.min && req.query.max){
+		blockTimeStampMin = parseInt(req.query.min);
+		blockTimeStampMax = parseInt(req.query.max);
 
 		getCollaborativeMiners(null, dataBase, res);
 		
