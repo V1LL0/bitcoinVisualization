@@ -110,7 +110,8 @@ function initGraphLinks(){
 
 /** Collaborative Graph **/
 
-var collaborativeNode2Miner = {}
+var collaborativeNode2Miner = {};
+var miner2collaborativeNode = {};
 var collaborativeNodes = [];
 var collaborativeLinks = [];
 
@@ -132,12 +133,13 @@ function generateAllCollaborativeLinks(newNodes){
 
 	for(var i=0; i<newNodes.length; i++){
 		for(var j=i+1; j<newNodes.length; j++){
-			addCollaborativeLink(i, j, "red")
+			addCollaborativeLink(newNodes[i], newNodes[j], "red")
 		}
 	}
-
-
+	
 }
+
+
 
 function initCollaborativeGraph(graphVisulization){
 	function isNewMiner(miner){
@@ -151,23 +153,26 @@ function initCollaborativeGraph(graphVisulization){
 
 		times = Object.keys(json);
 		times.forEach(function(time){
-			if (json[time]['size'] > 1){
+			if (json[time]['miners'].length > 1){
 				var newNodesList=[];
 
 				json[time]['miners'].forEach(function(miner){
 					if (isNewMiner(miner)){
 						collaborativeNode2Miner[num] = miner;
+						miner2collaborativeNode[miner] = num;
 						addNewCollaborativeNode(num);
 						newNodesList.push(num);
 						num++;
 					}
-
+					else{
+						newNodesList.push(miner2collaborativeNode[miner]);
+					}
 				})
 
 				//Mettere i link
 				generateAllCollaborativeLinks(newNodesList);
 
-
+			
 			}
 
 
