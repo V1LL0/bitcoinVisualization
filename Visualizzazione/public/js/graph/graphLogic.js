@@ -149,7 +149,7 @@ function initCollaborativeGraph(graphVisulization){
 	var collaborativeGraphCall = '/time2CollaborativeMiners';
 
 	try{
-		collaborativeGraphCall = '/time2CollaborativeMiners'+'?min='+$( "#slider-range" ).slider( "option", "values" )[0]+'&max='+$( "#slider-range" ).slider( "option", "values" )[1];
+		collaborativeGraphCall = '/time2CollaborativeMiners'+'?minTS='+$( "#slider-timeStampBlock" ).slider( "option", "values" )[0]+'&maxTS='+$( "#slider-timeStampBlock" ).slider( "option", "values" )[1]+'&minMiningCount='+$( "#slider-miningCountAddress" ).slider( "option", "values" )[0]+'&maxMiningCount='+$( "#slider-miningCountAddress" ).slider( "option", "values" )[1];
 	}catch(err){
 		collaborativeGraphCall = '/time2CollaborativeMiners';
 	}

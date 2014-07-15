@@ -14,10 +14,14 @@ var app = express();
 
 var async = require('async');
 
-/*********************** FILTRO TIMESTAMP **********************/
+/**************************** FILTRI ***************************/
 
 var blockTimeStampMin = 1293002065;
-var blockTimeStampMax = 1304145665;//999999999999999999999999;//1261969665;
+var blockTimeStampMax = 1304145665;
+
+var minMiningCount = 30;
+var maxMiningCount = 100;
+
 
 /***************************************************************/
 
@@ -70,12 +74,16 @@ app.get('/minersInteractionsList', function(req, res) {
 });
 
 app.get('/time2CollaborativeMiners', function(req, res) {
-	if(req.query.min && req.query.max){
-		blockTimeStampMin = parseInt(req.query.min);
-		blockTimeStampMax = parseInt(req.query.max);
+	if(req.query.minTS && req.query.maxTS && req.query.minMiningCount && req.query.maxMiningCount){
+		//filtro Time Stamp
+		blockTimeStampMin = parseInt(req.query.minTS);
+		blockTimeStampMax = parseInt(req.query.maxTS);
+
+		//filtro Mining Count
+		minMiningCount = parseInt(req.query.minMiningCount);
+		maxMiningCount = parseInt(req.query.maxMiningCount);
 
 		getCollaborativeMiners(null, dataBase, res);
-		
 
 	}
 	else
@@ -177,33 +185,50 @@ function getMinersInteraction(err, db){ //TODO: da rendere asincrono: http://jus
 
 }
 
-function getCollaborativeMiners(err, db, res){
-	var resultsLimit = 100000;
+/*function getCollaborativeMiners(err, db, res){
+	var resultsLimit = 150000;
 	time2CollaborativeMiners = {};
 
 	db.collection('transactions').find({"addressesValue_sending":{"$size":0}},{"addressesValue_receving":1, "_id":0, "time":1}).limit(resultsLimit).toArray(function(err, addressesValueReceiving_time_list) {
 
 		// console.log(JSON.stringify(addressesValueReceiving_time_list))
-		addressesValueReceiving_time_list.forEach(function(addressesValueReceiving_time){
+		addressesValueReceiving_time_list.forEach(function(addressesValueReceiving_time, index){
 			var time = addressesValueReceiving_time['time'];
-			if(time >= blockTimeStampMin && time <= blockTimeStampMax){
+
+			if(time >= blockTimeStampMin && time <= blockTimeStampMax){	
 				var addressValueReceivingList = addressesValueReceiving_time['addressesValue_receving'];
 				addressValueReceivingList.forEach(function(addressValueReceiving){
 					var addressReceiving = addressValueReceiving[0];
 
-					if(time2CollaborativeMiners[time]){
-						collaborativeMiners = time2CollaborativeMiners[time];
-						collaborativeMiners['size'] = collaborativeMiners['size']+1;
-						collaborativeMiners['miners'].push(addressReceiving);
-					}
-					else{
-						time2CollaborativeMiners[time] = {"size":1, "miners":[addressReceiving]};
-					}
-				})
+					var miningCountToCheck = 0;
+					db.collection('addresses').findOne({"_id": addressReceiving}, {"_id":0, "miningCount":1}, function(err, document){
+						miningCountToCheck = document.miningCount;
+
+						if(miningCountToCheck>=minMiningCount && miningCountToCheck <= maxMiningCount)
+							if(time2CollaborativeMiners[time]){
+								collaborativeMiners = time2CollaborativeMiners[time];
+								collaborativeMiners['size'] = collaborativeMiners['size']+1;
+								collaborativeMiners['miners'].push(addressReceiving);
+								console.log(time2CollaborativeMiners[time]);
+							}
+							else{
+								time2CollaborativeMiners[time] = {"size":1, "miners":[addressReceiving]};
+							}
+					});
+				});
 			}
-		})
+
+
+				if(res!== undefined){
+					res.end(JSON.stringify(time2CollaborativeMiners));
+				}
+				console.log(JSON.stringify(time2CollaborativeMiners));
+				console.log("all data loaded");
+			
+
+		});
 		//Salvataggio file CSV
-		/*		var csv = "ADDRESSES";
+				var csv = "ADDRESSES";
 		var allTimeStamps = Object.keys(time2CollaborativeMiners);
 		var allMiners = [];
 
@@ -233,11 +258,11 @@ function getCollaborativeMiners(err, db, res){
 				if(allMiners.indexOf(miner)<0)
 					allMiners.push(miner);
 			});
-		});*/
+		});
 
 		//da togliere
 		//time2CollaborativeMinersFiltered = time2CollaborativeMiners;
-		/*		for(var i=0; i<allMiners.length; i++){
+				for(var i=0; i<allMiners.length; i++){
 			var count=0;
 			csv=allMiners[i];
 			for(var j=0; j<allTimeStampsFiltered.length; j++){
@@ -249,17 +274,77 @@ function getCollaborativeMiners(err, db, res){
 					csv+=",  ";
 			}
 			//finita riga
-			writer.write(csv+", "+count+"\n");*/
+			writer.write(csv+", "+count+"\n");
 		//console.log(csv+", "+count+"\n");
 		//}
-		if(res!== undefined){
-			res.end(JSON.stringify(time2CollaborativeMiners));
-		}
-		console.log("all data loaded");
+
 	});
-	
-	
+
+
+}*/
+
+
+
+
+function getCollaborativeMiners(err, db, res){
+	var resultsLimit = 150000;
+	time2CollaborativeMiners = {};
+
+	db.collection('transactions').find({"addressesValue_sending":{"$size":0}},{"addressesValue_receving":1, "_id":0, "time":1}).limit(resultsLimit).toArray(function(err, addressesValueReceiving_time_list) {
+		// console.log(JSON.stringify(addressesValueReceiving_time_list))
+		async.eachSeries(addressesValueReceiving_time_list, function(addressesValueReceiving_time, callback){
+			var time = addressesValueReceiving_time['time'];
+
+			if(time >= blockTimeStampMin && time <= blockTimeStampMax){	
+				var addressValueReceivingList = addressesValueReceiving_time['addressesValue_receving'];
+				async.eachSeries(addressValueReceivingList, function(addressValueReceiving, callback2){
+					var addressReceiving = addressValueReceiving[0];
+
+					var miningCountToCheck = 0;
+					db.collection('addresses').findOne({"_id": addressReceiving}, {"_id":0, "miningCount":1}, function(err, document){
+						miningCountToCheck = document.miningCount;
+
+						if(miningCountToCheck>=minMiningCount && miningCountToCheck <= maxMiningCount)
+							if(time2CollaborativeMiners[time]){
+								collaborativeMiners = time2CollaborativeMiners[time];
+								collaborativeMiners['size'] = collaborativeMiners['size']+1;
+								collaborativeMiners['miners'].push(addressReceiving);
+							}
+							else{
+								time2CollaborativeMiners[time] = {"size":1, "miners":[addressReceiving]};
+							}
+						callback2();
+					});
+				}, function(err){
+					callback();
+				});
+			}else{
+				callback();
+			}
+
+		}, function(err){
+			
+			if(res!== undefined){
+				res.end(JSON.stringify(time2CollaborativeMiners));
+			}
+			console.log(JSON.stringify(time2CollaborativeMiners));
+			console.log("all data loaded");
+			
+			
+			
+		});
+		
+	});
+
 }
+
+
+
+
+
+
+
+
 
 
 function initData(err, db){
