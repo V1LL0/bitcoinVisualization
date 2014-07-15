@@ -41,7 +41,7 @@ class BitcoinParser:
 
 		for i in range(start, maxBlockNum+1):
 			
-                        print "Leggo il blocco: "+str(i) + "/" + str(maxBlockNum) + " | " + str(i-start+1)
+			print "Leggo il blocco: "+str(i) + "/" + str(maxBlockNum) + " | " + str(i-start+1)
 
 			block = getBlock(i)
 			tx = Transaction(block['tx'][0], block['time'])
@@ -60,7 +60,13 @@ class BitcoinParser:
 					self.dao.insertAddress(address_obj, tx)
 					self.dao.insertMining(str(address[0]), tx)
 					self.minersAddress.append(address[0])
-
+		
+		print block['time']
+		f = open('lastTimeStamp', 'w')
+		f.write(str(block['time']))
+		f.close()
+		
+		
 			# #Le altre transazioni aggiungono informazioni
 			# print "lengBlock"+str(len(block['tx']))
 			# for tx_index in range(1, len(block['tx'])):

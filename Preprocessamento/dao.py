@@ -175,6 +175,10 @@ class Dao:
 
 
 
+	def updateMiningCount(self, address):
+		newMiningCount = len(self.db.addresses.find({"_id":address},{"_id":0,"tx_mining":1})[0]["tx_mining"])
+		self.db.addresses.update({ "_id": address },{"$set": {"miningCount": newMiningCount}})
+
 
 
 

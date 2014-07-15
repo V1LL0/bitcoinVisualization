@@ -1,17 +1,19 @@
 #!/usr/bin/python
 
-from bitcoindParser import BitcoinParser
+from dao import Dao
 import time
+from bitcoinConverter import BitcoinConverter
 
-fileName = 'nextBlockToRead'
 
-def getLastBlock():
+fileName = 'nextAddressToReadFixing'
+
+def getLastAddress():
     fileToRead = open(fileName, 'r')
     start = fileToRead.readlines()[0]
     fileToRead.close()
     return int(start)
 
-def saveBlockNum(num):
+def saveAddressNum(num):
     f = open(fileName, 'w')
     f.write(str(num))
     f.close()
@@ -27,18 +29,33 @@ def printTime(end):
 
 start_time = time.time()
 
-parser = BitcoinParser()
-start = getLastBlock()
-#start = 155000 
-maxBlockNum = 300000
+
+start = getLastAddress()
+#start = 155000
+bitcoinToDollar = BitcoinConverter()
+dao = Dao(bitcoinToDollar)
+minersList = dao.getMinersList()
+
+maxAddressNum = len(minersList)
+
 try:
-    parser.startParsing(start, maxBlockNum)
-    saveBlockNum(maxBlockNum)
+    for i in range(start, maxAddressNum):
+        try:
+            dao.updateMiningCount(minersList[i])
+            print(str(i)+"scritto")
+            saveAddressNum(i)
+        except (IndexError, KeyError):
+            print(str(i)+"NOOOOOOOOOOOOOOOOOO")
+            saveAddressNum(i)
+
+        
     end = int(time.time() - start_time)
     printTime(end)
+    
 except ValueError:
     print "Attendere qualche secondo prima di avviare."
     print "Il Demone bitcoind potrebbe non essere ancora operativo"
+
 
 
 
