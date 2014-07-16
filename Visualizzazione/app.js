@@ -312,30 +312,23 @@ function getCollaborativeMiners(err, db, res){
 				console.log("maxMinersInBlock "+maxMinersInBlock);
 				console.log("listLength "+listLength);*/
 				//if(listLength >= minMinersInBlock && listLength <= maxMinersInBlock){
-					async.eachSeries(addressValueReceivingList, function(addressValueReceiving, callback2){
-						var addressReceiving = addressValueReceiving[0];
+				var addressesReceivingList = Object.keys(addressValueReceivingList);
 
-						var miningCountToCheck = 0;
-						db.collection('addresses').findOne({"_id": addressReceiving}, {"_id":0, "miningCount":1}, function(err, document){
-							miningCountToCheck = document.miningCount;
+				var miningCountToCheck = 0;
+				db.collection('addresses').find({"_id": {"$in":addressesReceivingList}}, {"_id":0, "miningCount":1}).toArray(function(err, document){
+					miningCountToCheck = document.miningCount;
 
-							if(miningCountToCheck>=minMiningCount && miningCountToCheck <= maxMiningCount)
-								if(time2CollaborativeMiners[time]){
-									collaborativeMiners = time2CollaborativeMiners[time];
-									collaborativeMiners['size'] = collaborativeMiners['size']+1;
-									collaborativeMiners['miners'].push(addressReceiving);
-								}
-								else{
-									time2CollaborativeMiners[time] = {"size":1, "miners":[addressReceiving]};
-								}
-							callback2();
-						});
-					}, function(err){
-						callback();
-					});
+					if(miningCountToCheck>=minMiningCount && miningCountToCheck <= maxMiningCount)
+						if(time2CollaborativeMiners[time]){
+							collaborativeMiners = time2CollaborativeMiners[time];
+							collaborativeMiners['size'] = collaborativeMiners['size']+1;
+							collaborativeMiners['miners'].push(addressReceiving);
+						}
+						else{
+							time2CollaborativeMiners[time] = {"size":1, "miners":[addressReceiving]};
+						}
+				});
 
-//				}
-//				callback();
 			}
 			callback();
 
