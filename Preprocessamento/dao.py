@@ -53,6 +53,14 @@ class Dao:
 
 		return objList2StringList( self.db.addresses.find({},{"_id":1}) )
 
+	def getTransactionsList(self):
+		def objList2StringList(objList):
+			stringList = []
+			for transaction in objList:
+				stringList.append(transaction['_id'])
+			return stringList
+
+		return objList2StringList( self.db.transactions.find({},{"_id":1}) )
 
 
 	def calculateFee(self, tx):
@@ -180,6 +188,8 @@ class Dao:
 		self.db.addresses.update({ "_id": address },{"$set": {"miningCount": newMiningCount}})
 
 
-
+	def setMinersCount(self, idTransaction):
+		minersCount = len(self.db.transactions.find({"_id":idTransaction},{"_id":0,"addressesValue_receving":1})[0]["addressesValue_receving"]);
+		self.db.transactions.update({ "_id": idTransaction },{"$set": {"minersCount": minersCount}})
 
 	

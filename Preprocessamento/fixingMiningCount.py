@@ -42,10 +42,10 @@ try:
     for i in range(start, maxAddressNum):
         try:
             dao.updateMiningCount(minersList[i])
-            print(str(i)+"scritto")
+            print(str(i)+" scritto")
             saveAddressNum(i)
         except (IndexError, KeyError):
-            print(str(i)+"NOOOOOOOOOOOOOOOOOO")
+            print(str(i)+" NOOOOOOOOOOOOOOOOOO")
             saveAddressNum(i)
 
         
