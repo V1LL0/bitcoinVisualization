@@ -149,7 +149,13 @@ function initCollaborativeGraph(graphVisulization){
 	var collaborativeGraphCall = '/time2CollaborativeMiners';
 
 	try{
-		collaborativeGraphCall = '/time2CollaborativeMiners'+'?minTS='+$( "#slider-timeStampBlock" ).slider( "option", "values" )[0]+'&maxTS='+$( "#slider-timeStampBlock" ).slider( "option", "values" )[1]+'&minMiningCount='+$( "#slider-miningCountAddress" ).slider( "option", "values" )[0]+'&maxMiningCount='+$( "#slider-miningCountAddress" ).slider( "option", "values" )[1];
+		collaborativeGraphCall = '/time2CollaborativeMiners'
+								+'?minTS='+$( "#slider-timeStampBlock" ).slider( "option", "values" )[0]
+								+'&maxTS='+$( "#slider-timeStampBlock" ).slider( "option", "values" )[1]
+								+'&minMiningCount='+$( "#slider-miningCountAddress" ).slider( "option", "values" )[0]
+								+'&maxMiningCount='+$( "#slider-miningCountAddress" ).slider( "option", "values" )[1]
+								+'&minMinersInBlock='+$( "#slider-minersCountInBlock" ).slider( "option", "values" )[0]
+								+'&maxMinersInBlock='+$( "#slider-minersCountInBlock" ).slider( "option", "values" )[1];
 	}catch(err){
 		collaborativeGraphCall = '/time2CollaborativeMiners';
 	}
@@ -207,14 +213,14 @@ function recallCollaborativeGraph(){
 	miner2collaborativeNode={};
 	collaborativeNodes=[];
 	collaborativeLinks=[];
-	
+
 	collaborativeGraphVisulization.setNodes(collaborativeNodes);
 	collaborativeGraphVisulization.setNode2Miner(collaborativeNode2Miner);
 	collaborativeGraphVisulization.setLinks(collaborativeLinks);
-	
-	
+
+
 	collaborativeGraphVisulization.redraw();
-	
+
 	initCollaborativeGraph(collaborativeGraphVisulization);
 
 }

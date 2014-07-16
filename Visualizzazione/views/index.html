@@ -46,6 +46,13 @@
 	<div id="slider-miningCountAddress"></div>
 
 
+	<p>
+		<label for="minersCountInBlock">Miners nel blocco:</label> <input type="text"
+			id="minersCountInBlock" readonly
+			style="border: 0; color: #f6931f; font-weight: bold;" size="50">
+	</p>
+
+	<div id="slider-minersCountInBlock"></div>
 
 
 	<script type="text/javascript" src="/js/graph/graphD3.js"></script>
@@ -97,6 +104,29 @@
       " - $" + $( "#slider-miningCountAddress" ).slider( "values", 1 ) );
   });
 
+
+  /* Slider per Miners Count In Block*/
+  $(function() {
+    $( "#slider-minersCountInBlock" ).slider({
+      step: 1,
+      range: true,
+      min: 0,
+      max: 1000,
+      values: [ 30, 100 ],
+      slide: function( event, ui ) {
+        $( "#minersCountInBlock" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
+      },
+
+	  change: function(){
+		  	recallCollaborativeGraph();
+	  }
+    
+    });
+    $( "#minersCountInBlock" ).val( "$" + $( "#slider-minersCountInBlock" ).slider( "values", 0 ) +
+      " - $" + $( "#slider-minersCountInBlock" ).slider( "values", 1 ) );
+  });
+
+  
   
   </script>
 
