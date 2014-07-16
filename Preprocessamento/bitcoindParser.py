@@ -136,5 +136,5 @@ class BitcoinParser:
 	# 		fileOut.write(str(miner) +  " : " + str(value) + "\n")
 	# 	fileOut.close()
 
-	 	
+		
 

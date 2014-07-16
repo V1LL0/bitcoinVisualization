@@ -31,7 +31,7 @@ start_time = time.time()
 start = getLastAddress()
 print "start: "+str(start)
 #start = 155000 
-maxAddressNum = 210054
+maxAddressNum = 100
 
 bitcoinToDollar=BitcoinConverter()
 dao = Dao(bitcoinToDollar)
@@ -42,13 +42,14 @@ try:
     for i in range(start, maxAddressNum):
         try:
             addressObj = dao.getAddress(minersList[i])
+            
             dao.db.addresses.update({"_id" : addressObj._id}, dao.encode_address(addressObj))
             print str(i)
             saveBlockNum(i)
         except IndexError:
             print str(i)
             saveBlockNum(i)
-            a=0    
+   
   
     end = int(time.time() - start_time)
     printTime(end)

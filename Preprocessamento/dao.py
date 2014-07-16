@@ -100,15 +100,23 @@ class Dao:
 
 		txMining = []
 		for txM in address.tx_mining:
-			txMining.append(txM._id)
+			try:
+				txMining.append(txM._id)
+			except:
+				txMining.append(txM)
 
 		txPayement=[]
 		for txP in address.tx_payment:
-			txPayement.append(txP._id)
-
+			try:
+				txPayement.append(txP._id)
+			except:
+				txPayement.append(txP)
 		txCredit=[]
 		for txC in address.tx_credit:
-			txCredit.append(txC._id)
+			try:
+				txCredit.append(txC._id)
+			except:
+				txCredit.append(txC)
 
 		return {"_type" : "address", \
 				"_id" : address._id, \
@@ -149,21 +157,27 @@ class Dao:
 			address = Address(document['_id'], self.converter)
 			address.miningCount = document["miningCount"]
 	
-			print "decode1"
 			for txM in document['tx_mining']:
-				address.tx_mining.append(self.decode_transaction(txM))
-			print "decode2"
+				try:
+					address.tx_mining.append(self.decode_transaction(txM))
+				except:
+					address.tx_mining.append(txM)
 			for txP in document['tx_payment']:
-				address.tx_payment.append(self.decode_transaction(txP))
-			print "decode3"
+				try:
+					address.tx_payment.append(self.decode_transaction(txP))
+				except:
+					address.tx_mining.append(txP)
 			for txC in document['tx_credit']:
-				address.tx_credit.append(self.decode_transaction(txC))
-			print "decode4"
+				try:
+					address.tx_credit.append(self.decode_transaction(txC))
+				except:
+					address.tx_mining.append(txC)
+				
+			
 			address.totBitCoinMined = document['totBitCoinMined']
 			address.totDollarMined = document['totDollarMined']
 			address.currentBitCoin = document['currentBitCoin']
 			address.totFees = document['totFees']
-			print "decode5"
 			return address
 	
 	
@@ -192,18 +206,12 @@ class Dao:
 	
 	def decode_transaction(self, document):
 			assert document["_type"] == "transaction"
-			print "dectransact1"
-			printJson(document)
+			#printJson(document)
 			transaction = Transaction(document)#document['_id'], document["time"])
-			print "dectransact2"
 			transaction.value_in = document['value_in']
-			print "dectransact3"
 			transaction.value_out = document['value_out']
-			print "dectransact4"
 			transaction.addressesValue_receving = document['addressesValue_receving']
-			print "dectransact5"
 			transaction.addressesValue_sending = document['addressesValue_sending']
-			print "dectransact6"
 	
 			return transaction
 
