@@ -121,8 +121,35 @@ function addNewCollaborativeNode(num){
 	collaborativeNodes.push({'number':num, 'x':100, 'y':100, 'size':5});
 }
 
+var edgesTotalMap = {};
+var edgesList = [];
+
 function generateAllCollaborativeLinks(newNodes){
 
+
+
+	for(var i=0; i<newNodes.length; i++){
+		for(var j=i+1; j<newNodes.length; j++){
+			//console.log("{"+newNodes[i]+", "+newNodes[j]+"}")
+			//console.log(edgesList)
+			if(newNodes[i] !== newNodes[j])
+				if(edgesList.indexOf( "{"+newNodes[i]+", "+newNodes[j]+"}") === -1  && edgesList.indexOf("{"+newNodes[j]+", "+newNodes[i]+"}") === -1 ){
+					edgesTotalMap["{"+newNodes[i]+", "+newNodes[j]+"}"] = 1;
+					edgesList.push("{"+newNodes[i]+", "+newNodes[j]+"}");
+//					addCollaborativeLink(newNodes[i], newNodes[j], "red");
+				}else{
+					if(edgesList.indexOf( "{"+newNodes[i]+", "+newNodes[j]+"}") > -1)
+						edgesTotalMap["{"+newNodes[i]+", "+newNodes[j]+"}"] += 1;
+					else
+						edgesTotalMap["{"+newNodes[j]+", "+newNodes[i]+"}"] += 1;
+				}
+		}
+	}
+
+
+}
+
+function drawAllCollaborativeLinks(){
 	function addCollaborativeLink(source, target, color){
 		//var color = calculateColor();
 //		var color = calculateColor(txCount);
@@ -131,13 +158,24 @@ function generateAllCollaborativeLinks(newNodes){
 	}
 
 
-	for(var i=0; i<newNodes.length; i++){
-		for(var j=i+1; j<newNodes.length; j++){
-			addCollaborativeLink(newNodes[i], newNodes[j], "red")
+	var minCooperations = parseInt( $( "#slider-minerCollaborations" ).slider( "value" ) );
+	
+	for(var i=0; i<edgesList.length; i++){
+		var edge = edgesList[i];
+		if(edgesTotalMap[edge] >= minCooperations){
+			var splitted = edge.split(/{|}|, /);
+			var source = splitted[1];
+			var target = splitted[2];
+			var color = "red";
+			addCollaborativeLink(source, target, color);
 		}
 	}
 
+
 }
+
+
+
 
 
 function initCollaborativeGraph(graphVisulization){
@@ -150,12 +188,12 @@ function initCollaborativeGraph(graphVisulization){
 
 	try{
 		collaborativeGraphCall = '/time2CollaborativeMiners'
-								+'?minTS='+$( "#slider-timeStampBlock" ).slider( "option", "values" )[0]
-								+'&maxTS='+$( "#slider-timeStampBlock" ).slider( "option", "values" )[1]
-								+'&minMiningCount='+$( "#slider-miningCountAddress" ).slider( "option", "values" )[0]
-								+'&maxMiningCount='+$( "#slider-miningCountAddress" ).slider( "option", "values" )[1]
-								+'&minMinersInBlock='+$( "#slider-minersCountInBlock" ).slider( "option", "values" )[0]
-								+'&maxMinersInBlock='+$( "#slider-minersCountInBlock" ).slider( "option", "values" )[1];
+			+'?minTS='+$( "#slider-timeStampBlock" ).slider( "option", "values" )[0]
+		+'&maxTS='+$( "#slider-timeStampBlock" ).slider( "option", "values" )[1]
+		+'&minMiningCount='+$( "#slider-miningCountAddress" ).slider( "option", "values" )[0]
+		+'&maxMiningCount='+$( "#slider-miningCountAddress" ).slider( "option", "values" )[1]
+		+'&minMinersInBlock='+$( "#slider-minersCountInBlock" ).slider( "option", "values" )[0]
+		+'&maxMinersInBlock='+$( "#slider-minersCountInBlock" ).slider( "option", "values" )[1];
 	}catch(err){
 		collaborativeGraphCall = '/time2CollaborativeMiners';
 	}
@@ -187,6 +225,9 @@ function initCollaborativeGraph(graphVisulization){
 
 
 		});
+
+		drawAllCollaborativeLinks();
+
 		console.log(num)
 		graphVisulization.setNode2Miner(collaborativeNode2Miner);
 		graphVisulization.setNodes(collaborativeNodes);

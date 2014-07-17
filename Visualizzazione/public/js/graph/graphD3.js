@@ -2,8 +2,8 @@ var GraphD3Visualization = function(div_name){
 
   var node2Miner = {}
 
-  var width = 800
-  var height = 600
+  var width = 600
+  var height = 400
 
   // mouse event vars
   var selected_node = null,
@@ -57,7 +57,7 @@ var GraphD3Visualization = function(div_name){
     force = d3.layout.force()
         .size([width, height])
         .nodes(nodesList) 
-        .linkDistance(5000)
+        .linkDistance(500)
         .charge(-200)
         .on("tick", tick);
   }

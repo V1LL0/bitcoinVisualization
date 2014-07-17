@@ -1,4 +1,3 @@
-
 /**
  * Module dependencies.
  */
@@ -7,7 +6,6 @@ var express = require('express')
 , fs = require('fs')
 , http = require('http')
 , path = require('path');
-
 var mongo = require('mongodb');
 
 var app = express();
@@ -22,9 +20,11 @@ var blockTimeStampMax = 1304145665;
 var minMiningCount = 30;
 var maxMiningCount = 100;
 
-var minMinersInBlock = 1;
-var maxMinersInBlock = 10;
+var minMinersInBlock = 30;
+var maxMinersInBlock = 100;
 
+//var minCollaborations = 2;
+var callsCount = 1;
 
 /***************************************************************/
 
@@ -292,45 +292,46 @@ function getMinersInteraction(err, db){ //TODO: da rendere asincrono: http://jus
 }*/
 
 
-
-
 function getCollaborativeMiners(err, db, res){
-	var resultsLimit = 100000;
+	var resultsLimit = 400000;
 	time2CollaborativeMiners = {};
-
-	db.collection('transactions').find({"addressesValue_sending":{"$size":0}},{"addressesValue_receving":1, "_id":0, "time":1}).limit(resultsLimit).toArray(function(err, addressesValueReceiving_time_list) {
-		// console.log(JSON.stringify(addressesValueReceiving_time_list))
+	var numberOfMiners = 0;
+	db.collection('transactions').find({"addressesValue_sending":{"$size":0}, "minersCount":{"$gte": minMinersInBlock, "$lte": maxMinersInBlock}, "time":{"$gte": blockTimeStampMin, "$lte": blockTimeStampMax}},{"addressesValue_receving":1, "_id":0, "time":1}).limit(resultsLimit).toArray(function(err, addressesValueReceiving_time_list) {
+//		 console.log(JSON.stringify(addressesValueReceiving_time_list))
 		async.eachSeries(addressesValueReceiving_time_list, function(addressesValueReceiving_time, callback){
 			var time = addressesValueReceiving_time['time'];
 
-			if(time >= blockTimeStampMin && time <= blockTimeStampMax){
-				var addressValueReceivingList = addressesValueReceiving_time['addressesValue_receving'];
-				var listLength = addressValueReceivingList.length;
-//				console.log(addressValueReceivingList);
-				/*console.log("ciaooooo11")
-				console.log("minMinersInBlock "+minMinersInBlock);
-				console.log("maxMinersInBlock "+maxMinersInBlock);
-				console.log("listLength "+listLength);*/
-				//if(listLength >= minMinersInBlock && listLength <= maxMinersInBlock){
-				var addressesReceivingList = Object.keys(addressValueReceivingList);
+			var addressValueReceivingList = addressesValueReceiving_time['addressesValue_receving'];
+//			var listLength = addressValueReceivingList.length;
+			
+			var addressesReceivingList = [];
+			addressValueReceivingList.forEach(function(item){
+				addressesReceivingList.push(item[0]);
+			});
+			
+			var miningCountToCheck = 0;
+			db.collection('addresses').find({"_id": {"$in":addressesReceivingList}, "miningCount":{"$gte":minMiningCount, "$lte":maxMiningCount}}, {"_id":1, "miningCount":1}).toArray(function(err, document){
+				document.forEach(function(miner){
 
-				var miningCountToCheck = 0;
-				db.collection('addresses').find({"_id": {"$in":addressesReceivingList}}, {"_id":0, "miningCount":1}).toArray(function(err, document){
-					miningCountToCheck = document.miningCount;
-
-					if(miningCountToCheck>=minMiningCount && miningCountToCheck <= maxMiningCount)
-						if(time2CollaborativeMiners[time]){
-							collaborativeMiners = time2CollaborativeMiners[time];
-							collaborativeMiners['size'] = collaborativeMiners['size']+1;
-							collaborativeMiners['miners'].push(addressReceiving);
-						}
-						else{
-							time2CollaborativeMiners[time] = {"size":1, "miners":[addressReceiving]};
-						}
+					var addressReceiving = miner["_id"];
+					
+					if(time2CollaborativeMiners[time]){
+						numberOfMiners++;
+						collaborativeMiners = time2CollaborativeMiners[time];
+						collaborativeMiners['size'] = collaborativeMiners['size']+1;
+						collaborativeMiners['miners'].push(addressReceiving);
+					}
+					else{
+						time2CollaborativeMiners[time] = {"size":1, "miners":[addressReceiving]};
+						numberOfMiners++;
+					}
+					
 				});
+				
+				callback();
+			});
 
-			}
-			callback();
+
 
 
 		}, function(err){
@@ -338,10 +339,11 @@ function getCollaborativeMiners(err, db, res){
 			if(res!== undefined){
 				res.end(JSON.stringify(time2CollaborativeMiners));
 			}
-			console.log(JSON.stringify(time2CollaborativeMiners));
+			//console.log(JSON.stringify(time2CollaborativeMiners));
+			console.log("Miners: "+numberOfMiners);
+			console.log("call number: "+callsCount);
+			callsCount++;
 			console.log("all data loaded");
-
-
 
 		});
 
