@@ -118,7 +118,7 @@ var collaborativeLinks = [];
 
 
 function addNewCollaborativeNode(num){
-	collaborativeNodes.push({'number':num, 'x':100, 'y':100, 'size':5});
+	collaborativeNodes.push({'number':num, 'x':100, 'y':100, 'size':3, 'type':'rect'});
 }
 
 var edgesTotalMap = {};

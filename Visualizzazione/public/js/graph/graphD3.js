@@ -58,7 +58,7 @@ var GraphD3Visualization = function(div_name){
         .size([width, height])
         .nodes(nodesList) 
         .linkDistance(500)
-        .charge(-200)
+        .charge(-500)
         .on("tick", tick);
   }
 
@@ -81,9 +81,14 @@ var GraphD3Visualization = function(div_name){
         .attr("y1", function(d) { return d.source.y; })
         .attr("x2", function(d) { return d.target.x; })
         .attr("y2", function(d) { return d.target.y; });
-
+//per nodi circolari
     node.attr("cx", function(d) { return d.x; })
         .attr("cy", function(d) { return d.y; });
+    
+//per nodi quadrati
+    node.attr("x", function(d) { return d.x; })
+    .attr("y", function(d) { return d.y; });
+
   }
 
   function rescale() {
@@ -122,6 +127,8 @@ var GraphD3Visualization = function(div_name){
     node.enter().insert("circle")
         .attr("class", "node")
         .attr("r", function(d) { return d.size; })
+//        .attr("width", 10)
+//        .attr("height", 10)
         .on("mousedown", function(d) { 
             // disable zoom
             // vis.call(d3.behavior.zoom().on("zoom"), null);
