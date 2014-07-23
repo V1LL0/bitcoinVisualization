@@ -264,5 +264,3 @@ function recallCollaborativeGraph(){
 	initCollaborativeGraph(collaborativeGraphVisulization);
 
 }
-
-

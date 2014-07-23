@@ -47,7 +47,8 @@ var GraphD3Visualization = function(div_name){
         .attr('height', height)
         .attr('fill', 'white');
   }
-
+  
+  var charge=-100000;
   function removeSelected(){
     console.log("removeSelected")
     redraw();
@@ -58,7 +59,8 @@ var GraphD3Visualization = function(div_name){
         .size([width, height])
         .nodes(nodesList) 
         .linkDistance(500)
-        .charge(-500)
+        .gravity(0.2)
+        .charge(charge)
         .on("tick", tick);
   }
 
@@ -192,6 +194,10 @@ var GraphD3Visualization = function(div_name){
     redraw();
   }
 
+  this.initLayout = function(){
+	  initLayout();
+  }
+  
   this.redraw = function(){
     redraw();
   }

@@ -28,9 +28,8 @@
 
 	<!-- <div id="visualization"></div> -->
 	<div id="collaborativeGraph"></div>
-
-
 	<button id="button_ok" onclick=recallCollaborativeGraph()>OK</button>
+
 	<p>
 		<label for="timeStampBlock">Time Stamp Blocco:</label> <input type="text"
 			id="timeStampBlock" readonly
@@ -63,6 +62,7 @@
 	</p>
 
 	<div id="slider-minerCollaborations"></div>
+	
 
 
 	<script type="text/javascript" src="/js/graph/graphD3.js"></script>
@@ -161,6 +161,7 @@
 	    });
 	    $( "#minerCollaborations" ).val( $( "#slider-minerCollaborations" ).slider( "value" ) );
 	  });
+
   
   </script>
 
