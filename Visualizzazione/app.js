@@ -23,7 +23,7 @@ var maxMiningCount = 100;
 var minMinersInBlock = 30;
 var maxMinersInBlock = 100;
 
-//var minCollaborations = 2;
+var minCollaborations = 2;
 var callsCount = 1;
 
 /***************************************************************/
@@ -102,6 +102,20 @@ app.get('/wheelData', function(req, res) {
 	res.end(JSON.stringify(wheelData));
 });
 
+app.get('/getSlidersValues', function(req, res){
+	res.end(blockTimeStampMin + " " + 
+		    blockTimeStampMax + " " +
+			minMiningCount + " " +
+			maxMiningCount + " " +
+			minMinersInBlock + " " +
+			maxMinersInBlock + " " +
+			minCollaborations);
+});
+
+app.get('/setCollaborationValue/', function(req,res){
+	minCollaborations = req.query.collaborations;
+	console.log("minCollaborations: " + minCollaborations);
+})
 
 /////////UTILITIES///////////
 
@@ -137,7 +151,6 @@ MongoClient.connect("mongodb://localhost:27017/bitcoinDB", initData);
 /***************************************************************/
 /*************************   FILTRI   **************************/
 /***************************************************************/
-
 
 function getMinerList(err, db){
 	var num = 0;
@@ -192,105 +205,6 @@ function getMinersInteraction(err, db){ //TODO: da rendere asincrono: http://jus
 	});
 
 }
-
-/*function getCollaborativeMiners(err, db, res){
-	var resultsLimit = 150000;
-	time2CollaborativeMiners = {};
-
-	db.collection('transactions').find({"addressesValue_sending":{"$size":0}},{"addressesValue_receving":1, "_id":0, "time":1}).limit(resultsLimit).toArray(function(err, addressesValueReceiving_time_list) {
-
-		// console.log(JSON.stringify(addressesValueReceiving_time_list))
-		addressesValueReceiving_time_list.forEach(function(addressesValueReceiving_time, index){
-			var time = addressesValueReceiving_time['time'];
-
-			if(time >= blockTimeStampMin && time <= blockTimeStampMax){	
-				var addressValueReceivingList = addressesValueReceiving_time['addressesValue_receving'];
-				addressValueReceivingList.forEach(function(addressValueReceiving){
-					var addressReceiving = addressValueReceiving[0];
-
-					var miningCountToCheck = 0;
-					db.collection('addresses').findOne({"_id": addressReceiving}, {"_id":0, "miningCount":1}, function(err, document){
-						miningCountToCheck = document.miningCount;
-
-						if(miningCountToCheck>=minMiningCount && miningCountToCheck <= maxMiningCount)
-							if(time2CollaborativeMiners[time]){
-								collaborativeMiners = time2CollaborativeMiners[time];
-								collaborativeMiners['size'] = collaborativeMiners['size']+1;
-								collaborativeMiners['miners'].push(addressReceiving);
-								console.log(time2CollaborativeMiners[time]);
-							}
-							else{
-								time2CollaborativeMiners[time] = {"size":1, "miners":[addressReceiving]};
-							}
-					});
-				});
-			}
-
-
-				if(res!== undefined){
-					res.end(JSON.stringify(time2CollaborativeMiners));
-				}
-				console.log(JSON.stringify(time2CollaborativeMiners));
-				console.log("all data loaded");
-
-
-		});
-		//Salvataggio file CSV
-				var csv = "ADDRESSES";
-		var allTimeStamps = Object.keys(time2CollaborativeMiners);
-		var allMiners = [];
-
-		var pathToFile = "/home/massimo/Desktop/collaborativeMiners.csv";
-		fs.openSync(pathToFile, "w")
-		var writer = fs.createWriteStream(pathToFile, {'flags': 'a'});
-
-		var time2CollaborativeMinersFiltered = {};
-
-		allTimeStamps.forEach(function(timeStamp){
-			if(time2CollaborativeMiners[timeStamp]['miners'].length > 1)
-				time2CollaborativeMinersFiltered[timeStamp]=time2CollaborativeMiners[timeStamp];
-		});
-
-
-
-		//preparazione header
-		allTimeStamps.forEach(function(ts){
-			csv+=", "+ts;
-		});
-		writer.write(csv+"\n");
-		//prendo tutti i miner
-		var allTimeStampsFiltered = allTimeStamps; 
-			Object.keys(time2CollaborativeMinersFiltered);
-		allTimeStampsFiltered.forEach(function(ts){
-			time2CollaborativeMinersFiltered[ts]['miners'].forEach(function(miner){
-				if(allMiners.indexOf(miner)<0)
-					allMiners.push(miner);
-			});
-		});
-
-		//da togliere
-		//time2CollaborativeMinersFiltered = time2CollaborativeMiners;
-				for(var i=0; i<allMiners.length; i++){
-			var count=0;
-			csv=allMiners[i];
-			for(var j=0; j<allTimeStampsFiltered.length; j++){
-				if(time2CollaborativeMinersFiltered[allTimeStampsFiltered[j]]["miners"].indexOf(allMiners[i])>=0){
-					count++;
-					csv+=", "+"X";
-				}
-				else
-					csv+=",  ";
-			}
-			//finita riga
-			writer.write(csv+", "+count+"\n");
-		//console.log(csv+", "+count+"\n");
-		//}
-
-	});
-
-
-}*/
-
 
 function getCollaborativeMiners(err, db, res){
 	var resultsLimit = 400000;
@@ -358,6 +272,9 @@ function initData(err, db){
 	//getMinerList(err, db);
 	getCollaborativeMiners(err, db, undefined);
 }
+
+
+
 
 
 

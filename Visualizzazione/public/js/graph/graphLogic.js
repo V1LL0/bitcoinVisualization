@@ -28,7 +28,6 @@ function callGet(path, callback){
 	});
 }
 
-
 function calculateSize(miningCount){
 	var size = 0;
 	var maxMiningCount = 70;
@@ -182,6 +181,8 @@ function initCollaborativeGraph(graphVisulization){
 		return Object.values(collaborativeNode2Miner).indexOf(miner) === -1;
 	}
 
+	printLoading()
+
 	var num = 0;
 	var collaborativeGraphCall = '/time2CollaborativeMiners';
 
@@ -232,6 +233,11 @@ function initCollaborativeGraph(graphVisulization){
 		graphVisulization.setNodes(collaborativeNodes);
 		graphVisulization.setLinks(collaborativeLinks);
 		graphVisulization.redraw();
+
+		printStatistics();
+		//Cache collaborations value
+		var collaborations_value = $( "#slider-minerCollaborations" ).slider( "option", "value" );
+		callGet("/setCollaborationValue/?collaborations=" + collaborations_value, function(data){});
 	});
 }
 
@@ -241,10 +247,12 @@ function initCollaborativeGraph(graphVisulization){
 graphVisulization.init();
 initGraphNodes(graphVisulization);*/
 
-var collaborativeGraphVisulization = new GraphD3Visualization("#collaborativeGraph");
-collaborativeGraphVisulization.init();
-initCollaborativeGraph(collaborativeGraphVisulization);
-printStatistics();
+var collaborativeGraphVisulization;
+function initGraph(){
+	collaborativeGraphVisulization = new GraphD3Visualization("#collaborativeGraph");
+	collaborativeGraphVisulization.init();
+	initCollaborativeGraph(collaborativeGraphVisulization);
+}
 
 
 
@@ -254,21 +262,21 @@ function recallCollaborativeGraph(){
 	collaborativeNodes=[];
 	collaborativeLinks=[];
 
+	//Clean D3Object
 	collaborativeGraphVisulization.setNodes(collaborativeNodes);
 	collaborativeGraphVisulization.setNode2Miner(collaborativeNode2Miner);
 	collaborativeGraphVisulization.setLinks(collaborativeLinks);
-
-
 	collaborativeGraphVisulization.redraw();
 
 	initCollaborativeGraph(collaborativeGraphVisulization);
-
-	//Update statistics on HTML 
-	printStatistics();
 }
 
 function printStatistics(){
 	var statistics = "#Node: " + collaborativeNodes.length + "<br>" +
 		"#Links: " + collaborativeLinks.length;
 	$("#statistics").html("<p>"+statistics+"</p>");
+}
+
+function printLoading(){
+	$("#statistics").html("<p>Loading...</p>");
 }
