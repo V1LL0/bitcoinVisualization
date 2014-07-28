@@ -82,7 +82,7 @@
 		var date1 = new Date(parseInt(ui.values[ 0 ])*1000);
         var date2 = new Date(parseInt(ui.values[ 1 ])*1000);
 		
-        $( "#timeStampBlock" ).val( date1.getDate()+"/"+date1.getMonth()+"/"+date1.getFullYear()+"  -  "+date2.getDate()+"/"+date2.getMonth()+"/"+date2.getFullYear() );
+        $( "#timeStampBlock" ).val( date1.getDate()+"/"+(date1.getMonth()+1)+"/"+date1.getFullYear()+"  -  "+date2.getDate()+"/"+(date2.getMonth()+1)+"/"+date2.getFullYear() );
       }
     /* ,
 
@@ -96,7 +96,7 @@
 		
 
 	  
-    $( "#timeStampBlock" ).val(date1.getDate()+"/"+date1.getMonth()+"/"+date1.getFullYear()+"  -  "+date2.getDate()+"/"+date2.getMonth()+"/"+date2.getFullYear());
+    $( "#timeStampBlock" ).val(date1.getDate()+"/"+(date1.getMonth()+1)+"/"+date1.getFullYear()+"  -  "+date2.getDate()+"/"+(date2.getMonth()+1)+"/"+date2.getFullYear());
   });
 
 
