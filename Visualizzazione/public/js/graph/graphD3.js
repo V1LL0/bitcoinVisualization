@@ -34,20 +34,25 @@ var GraphD3Visualization = function(div_name){
         .attr("height", height)
         //.attr("transform", "translate(" + width / 4 + "," + height / 3 + ")")
         .attr("pointer-events", "all");
+
+    outer.call(d3.behavior.zoom().scaleExtent([0, 1000]).on("zoom", rescale))
+        .on("dblclick.zoom", null)
+
+    outer.append('svg:rect')
+      .attr('width', width)
+      .attr('height', height)
+      .attr('fill', 'white')
+      .attr('stroke', 'black')
+      .attr('stroke-width', 3);
   }
 
   var addInteractionEvents = function(){
     vis = outer
       .append('svg:g')
-      .call(d3.behavior.zoom().scaleExtent([0, 1000]).on("zoom", rescale))
-        .on("dblclick.zoom", null)
+      //.call(d3.behavior.zoom().scaleExtent([0, 1000]).on("zoom", rescale))
+       // .on("dblclick.zoom", null)
       .append('svg:g')
         // .on("mousedown", removeSelected)
-
-    vis.append('svg:rect')
-        .attr('width', width)
-        .attr('height', height)
-        .attr('fill', 'white');
   }
   
   var charge=-100000;
@@ -102,11 +107,11 @@ var GraphD3Visualization = function(div_name){
   function rescale() {
     console.log("zoom del grafo")
     vis.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-//    trans=d3.event.translate;
-//    scale=d3.event.scale;
-//    vis.attr("transform",
-//        "translate(" + trans + ")"
-//        + " scale(" + scale + ")");
+   trans=d3.event.translate;
+   scale=d3.event.scale;
+   vis.attr("transform",
+       "translate(" + trans + ")"
+       + " scale(" + scale + ")");
   }
 
   function redraw(){

@@ -8,6 +8,10 @@ body {
   height: 100%;
 }
 
+svg {
+  background-color: #FF0;
+}
+
 
 .node {
   fill: #000;

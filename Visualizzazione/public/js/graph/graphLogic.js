@@ -252,6 +252,10 @@ function initGraph(){
 	collaborativeGraphVisulization = new GraphD3Visualization("#collaborativeGraph");
 	collaborativeGraphVisulization.init();
 	initCollaborativeGraph(collaborativeGraphVisulization);
+
+// 	collaborativeWithBlocksGraphVisulization = new GraphD3Visualization("#collaborativeGraphWithBlocks");
+// 	collaborativeWithBlocksGraphVisulization.init();
+// 	initCollaborativeGraph(collaborativeWithBlocksGraphVisulization);
 }
 
 
