@@ -24,7 +24,6 @@ var GraphD3Visualization = function(div_name){
       node = null,
       link = null;
 
-  var blocks_nodes = [];
 
   this.getForce = function(){ return force;}
 
@@ -117,16 +116,7 @@ var GraphD3Visualization = function(div_name){
   }
 
   function redraw(){
-    if (blocks_nodes.length === 0)
-      redrawOneNodeType()
-    else
-      redrawTwoNodesType()
-  }
-
-  function redrawOneNodeType(){
-    console.log("redraw")
     link = link.data(links);
-
     link.enter().insert("line", ".node")
         .attr("class", "link")      
         .style("stroke", function(d) { return d.color; })
@@ -145,10 +135,12 @@ var GraphD3Visualization = function(div_name){
 
     link.classed("link_selected", function(d) { return d === selected_link; });
 
+
     node = node.data(nodes);
     node.enter().insert("circle")
         .attr("class", "node")
         .attr("r", function(d) { return d.size; })
+        .style("fill", function(d) { return d.color; })
 //        .attr("width", 10)
 //        .attr("height", 10)
         .on("mousedown", function(d) { 
@@ -193,10 +185,6 @@ var GraphD3Visualization = function(div_name){
   force.start();
   }
 
-  function redrawTwoNodesType(){
-    console.log("two nodes")
-  }
-
 
   this.setNodes = function(newNodes){
     nodes = newNodes;
@@ -232,8 +220,5 @@ var GraphD3Visualization = function(div_name){
     node2Miner = dictionary;
   }
 
-  this.setBlocksNodes = function(blk_nodes){
-    blocks_nodes = blk_nodes;
-  }
 
 }

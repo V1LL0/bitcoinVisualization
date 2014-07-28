@@ -34,8 +34,11 @@ var times = [];
 var edgesTotalMap = {};
 var edgesList = [];
 
-function addNewCollaborativeNode(num){
-	collaborativeNodes.push({'number':num, 'x':100, 'y':100, 'size':4, 'type':'rect'});
+var blocksNodesList = [];
+var blocksEdgesList = [];
+
+function addNewNode(list, num, color){
+	list.push({'number':num, 'x':100, 'y':100, 'size':4, 'color':color});
 }
 
 
@@ -58,8 +61,18 @@ function generateAllCollaborativeLinks(newNodes){
 				}
 		}
 	}
+}
 
 
+// function generateAllBlocksLinks(){
+	
+// 	addLink(blocksEdgesList, time, num, "black");
+// }
+
+
+function addLink(list, source, target, color){
+	var link = {"source": parseInt(source), "target": parseInt(target), "color":color};
+	list.push(link);
 }
 
 function drawAllCollaborativeLinks(){
@@ -107,13 +120,20 @@ function getData(callback){
 		time2CollaborativeMiners = getJSONFromString(data);
 		times = Object.keys(time2CollaborativeMiners);
 
-		initCollaborativeGraph(collaborativeGraphVisulization);
-		initCollaborativeWithBlocksGraph(collaborativeWithBlocksGraphVisulization);
+		setLists();
+
+		console.log(blocksEdgesList[0]);
+		// initGraph(collaborativeGraphVisulization, collaborativeNodes, collaborativeLinks);
+		initGraph(collaborativeWithBlocksGraphVisulization, blocksNodesList, blocksEdgesList);
+
+		printStatistics();
+		//Cache collaborations value
+		var collaborations_value = $( "#slider-minerCollaborations" ).slider( "option", "value" );
+		callGet("/setCollaborationValue/?collaborations=" + collaborations_value, function(data){});
 	});
 }
 
-
-function initCollaborativeGraph(graphVisulization){
+function setLists(){
 	function isNewMiner(miner){
 		return Object.values(collaborativeNode2Miner).indexOf(miner) === -1;
 	}	
@@ -122,44 +142,82 @@ function initCollaborativeGraph(graphVisulization){
 	times.forEach(function(time){
 		if (time2CollaborativeMiners[time]['miners'].length > 1){
 			var newNodesList=[];
-
+			//addNewNode(blocksNodesList, time, "red");
 			time2CollaborativeMiners[time]['miners'].forEach(function(miner){
 				if (isNewMiner(miner)){
 					collaborativeNode2Miner[num] = miner;
 					miner2collaborativeNode[miner] = num;
-					addNewCollaborativeNode(num);
+					addNewNode(collaborativeNodes, num, "black");
+					addNewNode(blocksNodesList, num, "green");
+					// addLink(blocksEdgesList, time, num, "black");
+
 					newNodesList.push(num);
 					num++;
 				}
 				else{
 					newNodesList.push(miner2collaborativeNode[miner]);
+					// addLink(blocksEdgesList, time, miner2collaborativeNode[miner], "black");
+
 				}
+
 			})
 
 			//Mettere i link
 			generateAllCollaborativeLinks(newNodesList);
+			// generateAllBlocksLinks(newNodesList);
 		}
 	});
 
+	times.forEach(function(time){
+		addNewNode(blocksNodesList, num, "red");
+		
+		if (time2CollaborativeMiners[time]['miners'].length > 1){
+			time2CollaborativeMiners[time]['miners'].forEach(function(miner){
+				console.log(num);
+				console.log(miner2collaborativeNode[miner]);
+				addLink(blocksEdgesList, num, miner2collaborativeNode[miner], "black");
+			});
+		}
+		num++;
+
+
+
+	});
+
+	console.log("miner2collaborativeNode: ");
+	console.log(miner2collaborativeNode);
+	
+	console.log("blocksEdgesList: ");
+	console.log(blocksEdgesList);
+
+
+
 	drawAllCollaborativeLinks();
 
-	console.log(num)
+	
+
+}
+
+
+function initGraph(graphVisulization, nodes, links){
+	
+
+	//console.log(num)
 
 	graphVisulization.setNode2Miner(collaborativeNode2Miner);
-	graphVisulization.setNodes(collaborativeNodes);
-	graphVisulization.setLinks(collaborativeLinks);
+	graphVisulization.setNodes(nodes);
+	console.log(links)
+	graphVisulization.setLinks(links);
 	graphVisulization.redraw();
-
-	printStatistics();
-	//Cache collaborations value
-	var collaborations_value = $( "#slider-minerCollaborations" ).slider( "option", "value" );
-	callGet("/setCollaborationValue/?collaborations=" + collaborations_value, function(data){});
-
 }
 
-function initCollaborativeWithBlocksGraph(){
-	console.log("bella");
-}
+
+/******DA ELIMINARE*********/
+// function initCollaborativeWithBlocksGraph(){
+// 	times.forEach(function(time){
+// 		addNewCollaborativeNode(num, "black");
+// 	});
+// }
 
 /*var graphVisulization = new GraphD3Visualization("#visualization");
 graphVisulization.init();
@@ -185,6 +243,8 @@ function cleanGraph(graph){
 	times = [];
 	edgesTotalMap = {};
 	edgesList = [];
+	blocksNodesList = [];
+	blocksEdgesList = [];
 	
 
 

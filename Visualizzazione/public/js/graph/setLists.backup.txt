@@ -1,0 +1,64 @@
+function setLists(){
+	function isNewMiner(miner){
+		return Object.values(collaborativeNode2Miner).indexOf(miner) === -1;
+	}	
+	var num = 0;
+
+	times.forEach(function(time){
+		if (time2CollaborativeMiners[time]['miners'].length > 1){
+			var newNodesList=[];
+			//addNewNode(blocksNodesList, time, "red");
+			time2CollaborativeMiners[time]['miners'].forEach(function(miner){
+				if (isNewMiner(miner)){
+					collaborativeNode2Miner[num] = miner;
+					miner2collaborativeNode[miner] = num;
+					addNewNode(collaborativeNodes, num, "black");
+					addNewNode(blocksNodesList, num, "green");
+					// addLink(blocksEdgesList, time, num, "black");
+
+					newNodesList.push(num);
+					num++;
+				}
+				else{
+					newNodesList.push(miner2collaborativeNode[miner]);
+					// addLink(blocksEdgesList, time, miner2collaborativeNode[miner], "black");
+
+				}
+
+			})
+
+			//Mettere i link
+			generateAllCollaborativeLinks(newNodesList);
+			// generateAllBlocksLinks(newNodesList);
+		}
+	});
+
+	times.forEach(function(time){
+		addNewNode(blocksNodesList, num, "red");
+		num++;
+
+		if (time2CollaborativeMiners[time]['miners'].length > 1){
+			time2CollaborativeMiners[time]['miners'].forEach(function(miner){
+				console.log(num);
+				console.log(miner2collaborativeNode[miner]);
+				addLink(blocksEdgesList, num, miner2collaborativeNode[miner], "black");
+			});
+		}
+
+
+
+	});
+
+	console.log("miner2collaborativeNode: ");
+	console.log(miner2collaborativeNode);
+	
+	console.log("blocksEdgesList: ");
+	console.log(blocksEdgesList);
+
+
+
+	drawAllCollaborativeLinks();
+
+	
+
+}

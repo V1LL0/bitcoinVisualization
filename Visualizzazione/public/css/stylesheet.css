@@ -8,11 +8,6 @@ body {
   height: 100%;
 }
 
-svg {
-  background-color: #FF0;
-}
-
-
 .node {
   fill: #000;
   /**cursor: crosshair;**/
@@ -37,7 +32,7 @@ svg {
 
 .link {
   stroke: #999;
-  stroke-width: 2;
+  stroke-width: 1;
   /**cursor: crosshair;**/
 }
 
