@@ -1,9 +1,10 @@
 var GraphD3Visualization = function(div_name){
 
-  var node2Miner = {}
+  var node2Miner = {};
 
-  var width = 600
-  var height = 400
+  var width = 1024;
+  var height = 768;
+  var r = 4;
 
   // mouse event vars
   var selected_node = null,
@@ -31,13 +32,14 @@ var GraphD3Visualization = function(div_name){
       .append("svg:svg")
         .attr("width", width)
         .attr("height", height)
+        //.attr("transform", "translate(" + width / 4 + "," + height / 3 + ")")
         .attr("pointer-events", "all");
   }
 
   var addInteractionEvents = function(){
     vis = outer
       .append('svg:g')
-        .call(d3.behavior.zoom().on("zoom", rescale))
+      .call(d3.behavior.zoom().scaleExtent([0, 1000]).on("zoom", rescale))
         .on("dblclick.zoom", null)
       .append('svg:g')
         // .on("mousedown", removeSelected)
@@ -50,16 +52,16 @@ var GraphD3Visualization = function(div_name){
   
   var charge=-100000;
   function removeSelected(){
-    console.log("removeSelected")
+    console.log("removeSelected");
     redraw();
   }
 
   var initLayout = function(){
     force = d3.layout.force()
-        .size([width, height])
+        .size([width*=15, height*=15])
         .nodes(nodesList) 
-        .linkDistance(500)
-        .gravity(0.2)
+        .linkDistance(50)
+        .gravity(0.16)
         .charge(charge)
         .on("tick", tick);
   }
@@ -84,23 +86,27 @@ var GraphD3Visualization = function(div_name){
         .attr("x2", function(d) { return d.target.x; })
         .attr("y2", function(d) { return d.target.y; });
 //per nodi circolari
-    node.attr("cx", function(d) { return d.x; })
-        .attr("cy", function(d) { return d.y; });
+    node.attr("cx", function(d) { return d.x = Math.max(r, Math.min(width - r, d.x)); })
+    	.attr("cy", function(d) { return d.y = Math.max(r, Math.min(height - r, d.y)); });
+//    node.attr("cx", function(d) { return d.x; })
+//        .attr("cy", function(d) { return d.y; });
     
 //per nodi quadrati
+    /*
     node.attr("x", function(d) { return d.x; })
     .attr("y", function(d) { return d.y; });
-
+*/
+    
   }
 
   function rescale() {
     console.log("zoom del grafo")
-    trans=d3.event.translate;
-    scale=d3.event.scale;
-
-    vis.attr("transform",
-        "translate(" + trans + ")"
-        + " scale(" + scale + ")");
+    vis.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+//    trans=d3.event.translate;
+//    scale=d3.event.scale;
+//    vis.attr("transform",
+//        "translate(" + trans + ")"
+//        + " scale(" + scale + ")");
   }
 
   function redraw(){
@@ -118,7 +124,7 @@ var GraphD3Visualization = function(div_name){
             selected_node = null; 
             console.log("selezionato l'arco (" + selected_link['source']['number'] + ", " + selected_link['target']['number'] + ")")
 
-            redraw(); 
+           // redraw(); 
           })
 
     link.exit().remove();
@@ -142,16 +148,17 @@ var GraphD3Visualization = function(div_name){
 
             console.log("selezionato il nodo " + selected_node['number'] + " " + JSON.stringify(node2Miner[selected_node['number']]))
 
-            redraw(); 
+            //redraw(); 
           })
-        .on("mousedrag",
-          function(d) {
-
-          })
-        .on("mouseup", 
-          function(d) { 
-            
-          })
+//        .on("mousedrag",
+//          function(d) {
+//        	
+//          })
+//        .on("mouseup", 
+//          function(d) { 
+//            
+//          })
+          .call(force.drag)
       .transition()
         .duration(750)
         .ease("elastic")
