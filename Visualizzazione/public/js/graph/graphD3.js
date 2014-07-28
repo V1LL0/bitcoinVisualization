@@ -24,7 +24,9 @@ var GraphD3Visualization = function(div_name){
       node = null,
       link = null;
 
-    this.getForce = function(){ return force;}
+  var blocks_nodes = [];
+
+  this.getForce = function(){ return force;}
 
   // init svg
   var initSvg = function(){
@@ -93,8 +95,8 @@ var GraphD3Visualization = function(div_name){
 //per nodi circolari
     node.attr("cx", function(d) { return d.x = Math.max(r, Math.min(width - r, d.x)); })
     	.attr("cy", function(d) { return d.y = Math.max(r, Math.min(height - r, d.y)); });
-//    node.attr("cx", function(d) { return d.x; })
-//        .attr("cy", function(d) { return d.y; });
+   // node.attr("cx", function(d) { return d.x; })
+   //     .attr("cy", function(d) { return d.y; });
     
 //per nodi quadrati
     /*
@@ -107,14 +109,21 @@ var GraphD3Visualization = function(div_name){
   function rescale() {
     console.log("zoom del grafo")
     vis.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-   trans=d3.event.translate;
-   scale=d3.event.scale;
+    var trans=d3.event.translate;
+    var scale=d3.event.scale;
    vis.attr("transform",
        "translate(" + trans + ")"
        + " scale(" + scale + ")");
   }
 
   function redraw(){
+    if (blocks_nodes.length === 0)
+      redrawOneNodeType()
+    else
+      redrawTwoNodesType()
+  }
+
+  function redrawOneNodeType(){
     console.log("redraw")
     link = link.data(links);
 
@@ -184,6 +193,11 @@ var GraphD3Visualization = function(div_name){
   force.start();
   }
 
+  function redrawTwoNodesType(){
+    console.log("two nodes")
+  }
+
+
   this.setNodes = function(newNodes){
     nodes = newNodes;
     force.nodes(nodes);
@@ -216,6 +230,10 @@ var GraphD3Visualization = function(div_name){
 
   this.setNode2Miner = function(dictionary){
     node2Miner = dictionary;
+  }
+
+  this.setBlocksNodes = function(blk_nodes){
+    blocks_nodes = blk_nodes;
   }
 
 }

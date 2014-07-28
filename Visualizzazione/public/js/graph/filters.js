@@ -17,7 +17,7 @@ function getValuesFromCacheAndThenStart(){
       collaborations = parseInt(array_values[6]);
 
       renderSliders();
-      initGraph();
+      createGraph();
   });
 }
 
