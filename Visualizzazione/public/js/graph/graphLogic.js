@@ -244,7 +244,7 @@ initGraphNodes(graphVisulization);*/
 var collaborativeGraphVisulization = new GraphD3Visualization("#collaborativeGraph");
 collaborativeGraphVisulization.init();
 initCollaborativeGraph(collaborativeGraphVisulization);
-
+printStatistics();
 
 
 
@@ -263,4 +263,12 @@ function recallCollaborativeGraph(){
 
 	initCollaborativeGraph(collaborativeGraphVisulization);
 
+	//Update statistics on HTML 
+	printStatistics();
+}
+
+function printStatistics(){
+	var statistics = "#Node: " + collaborativeNodes.length + "<br>" +
+		"#Links: " + collaborativeLinks.length;
+	$("#statistics").html("<p>"+statistics+"</p>");
 }
