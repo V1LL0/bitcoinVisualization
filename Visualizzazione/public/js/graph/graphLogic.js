@@ -177,7 +177,7 @@ function setLists(){
 					collaborativeNode2Miner[num] = miner;
 					miner2collaborativeNode[miner] = num;
 					addNewNode(collaborativeNodes, 100, 100, num, 4, "black");
-					addNewNode(blocksNodesList, num, 100, 100, 20, "red");
+					addNewNode(blocksNodesList, num, 100, 100, 40, "red");
 					// addLink(blocksEdgesList, time, num, "black");
 
 					newNodesList.push(num);
@@ -203,7 +203,7 @@ function setLists(){
 		if (time2CollaborativeMiners[time]['miners'].length > 1){
 			collaborativeNode2Miner[num] = time;
 			miner2collaborativeNode[time] = num;
-			addNewNode(blocksNodesList, num, 100, height/2, 50, "green");
+			addNewNode(blocksNodesList, num, 100, height/2, 70, "green");
 			time2CollaborativeMiners[time]['miners'].forEach(function(miner){
 				addLink(blocksEdgesList, num, miner2collaborativeNode[miner], "black");
 			});
