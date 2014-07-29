@@ -8,6 +8,26 @@ body {
   height: 100%;
 }
 
+#statistics {
+  float: top
+}
+
+#graphs {
+
+}
+
+#collaborativeGraph {
+
+}
+
+#collaborativeGraphWithBlocks {
+
+}
+
+#filters{
+
+}
+
 .node {
   fill: #000;
   /**cursor: crosshair;**/

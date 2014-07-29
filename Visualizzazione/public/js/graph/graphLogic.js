@@ -23,6 +23,9 @@ function callGet(path, callback){
 
 /** Collaborative Graph **/
 
+//Vale true se occorre cambiare il primo grafo, false se il secondo
+var isCollaborativeGraphToChange = false;
+
 var collaborativeNode2Miner = {};
 var miner2collaborativeNode = {};
 var collaborativeNodes = [];
@@ -37,8 +40,8 @@ var edgesList = [];
 var blocksNodesList = [];
 var blocksEdgesList = [];
 
-function addNewNode(list, num, color){
-	list.push({'number':num, 'x':100, 'y':100, 'size':4, 'color':color});
+function addNewNode(list, num, size, color){
+	list.push({'number':num, 'x':100, 'y':100, 'size':size, 'color':color});
 }
 
 
@@ -100,20 +103,42 @@ function drawAllCollaborativeLinks(){
 }
 
 
-function getData(callback){
-	printLoading()
-
-	var collaborativeGraphCall = '/time2CollaborativeMiners';
-
-	try{
-		collaborativeGraphCall = '/time2CollaborativeMiners'
+function getQuery(){
+	if (isCollaborativeGraphToChange)
+		return collaborativeGraphCall = '/time2CollaborativeMiners'
 			+'?minTS='+$( "#slider-timeStampBlock" ).slider( "option", "values" )[0]
 		+'&maxTS='+$( "#slider-timeStampBlock" ).slider( "option", "values" )[1]
 		+'&minMiningCount='+$( "#slider-miningCountAddress" ).slider( "option", "values" )[0]
 		+'&maxMiningCount='+$( "#slider-miningCountAddress" ).slider( "option", "values" )[1]
 		+'&minMinersInBlock='+$( "#slider-minersCountInBlock" ).slider( "option", "values" )[0]
 		+'&maxMinersInBlock='+$( "#slider-minersCountInBlock" ).slider( "option", "values" )[1];
-	}catch(err){
+
+	var date_timestamp = new Date($( "#blocksDate" ).val() + " 0:0:0").getTime();
+	var timestamp_mix = $( "#slider-dateTimeBlocks" ).slider( "option", "values" )[0];
+	var timestamp_max = $( "#slider-dateTimeBlocks" ).slider( "option", "values" )[1];
+	//calcolare i parametri dello slider
+	var newDate_min = new Date( (date_timestamp + timestamp_min) * 1000);
+	var newDate_max = new Date( (date_timestamp + timestamp_max) * 1000);
+	var newTimestamp_min = parseInt(newDate_min.getTime() / 1000);
+	var newTimestamp_max = parseInt(newDate_max.getTime() / 1000);
+
+	return '/time2CollaborativeMiners'
+			+'?minTS='+ newTimestamp_min
+		+'&maxTS='+newTimestamp_max
+		+'&minMiningCount='+$( "#slider-miningCountAddress" ).slider( "option", "values" )[0]
+		+'&maxMiningCount='+$( "#slider-miningCountAddress" ).slider( "option", "values" )[1]
+		+'&minMinersInBlock='+$( "#slider-minersCountInBlock" ).slider( "option", "values" )[0]
+		+'&maxMinersInBlock='+$( "#slider-minersCountInBlock" ).slider( "option", "values" )[1];
+}
+
+function getData(callback){
+	printLoading()
+
+	var collaborativeGraphCall;
+
+	try {
+		collaborativeGraphCall = getQuery();		
+	} catch (err) {
 		collaborativeGraphCall = '/time2CollaborativeMiners';
 	}
 	callGet(collaborativeGraphCall, function(data){
@@ -123,8 +148,10 @@ function getData(callback){
 		setLists();
 
 		console.log(blocksEdgesList[0]);
-		// initGraph(collaborativeGraphVisulization, collaborativeNodes, collaborativeLinks);
-		initGraph(collaborativeWithBlocksGraphVisulization, blocksNodesList, blocksEdgesList);
+		if (isCollaborativeGraphToChange)
+			initGraph(collaborativeGraphVisulization, collaborativeNodes, collaborativeLinks);
+		else
+			initGraph(collaborativeWithBlocksGraphVisulization, blocksNodesList, blocksEdgesList);
 
 		printStatistics();
 		//Cache collaborations value
@@ -147,8 +174,8 @@ function setLists(){
 				if (isNewMiner(miner)){
 					collaborativeNode2Miner[num] = miner;
 					miner2collaborativeNode[miner] = num;
-					addNewNode(collaborativeNodes, num, "black");
-					addNewNode(blocksNodesList, num, "green");
+					addNewNode(collaborativeNodes, num, 4, "black");
+					addNewNode(blocksNodesList, num, 8, "red");
 					// addLink(blocksEdgesList, time, num, "black");
 
 					newNodesList.push(num);
@@ -169,7 +196,7 @@ function setLists(){
 	});
 
 	times.forEach(function(time){
-		addNewNode(blocksNodesList, num, "red");
+		addNewNode(blocksNodesList, num, 10, "green");
 		
 		if (time2CollaborativeMiners[time]['miners'].length > 1){
 			time2CollaborativeMiners[time]['miners'].forEach(function(miner){
@@ -184,44 +211,18 @@ function setLists(){
 
 	});
 
-	console.log("miner2collaborativeNode: ");
-	console.log(miner2collaborativeNode);
-	
-	console.log("blocksEdgesList: ");
-	console.log(blocksEdgesList);
-
-
-
 	drawAllCollaborativeLinks();
-
-	
 
 }
 
 
 function initGraph(graphVisulization, nodes, links){
-	
-
-	//console.log(num)
-
 	graphVisulization.setNode2Miner(collaborativeNode2Miner);
 	graphVisulization.setNodes(nodes);
 	console.log(links)
 	graphVisulization.setLinks(links);
 	graphVisulization.redraw();
 }
-
-
-/******DA ELIMINARE*********/
-// function initCollaborativeWithBlocksGraph(){
-// 	times.forEach(function(time){
-// 		addNewCollaborativeNode(num, "black");
-// 	});
-// }
-
-/*var graphVisulization = new GraphD3Visualization("#visualization");
-graphVisulization.init();
-initGraphNodes(graphVisulization);*/
 
 var collaborativeGraphVisulization;
 var collaborativeWithBlocksGraphVisulization;
@@ -231,7 +232,7 @@ function createGraph(){
 	
 	collaborativeGraphVisulization.init();
 	collaborativeWithBlocksGraphVisulization.init();	
-	getData();
+	// getData();
 }
 
 function cleanGraph(graph){
@@ -244,8 +245,7 @@ function cleanGraph(graph){
 	edgesTotalMap = {};
 	edgesList = [];
 	blocksNodesList = [];
-	blocksEdgesList = [];
-	
+	blocksEdgesList = [];	
 
 
 	//Clean D3Object
@@ -255,9 +255,21 @@ function cleanGraph(graph){
 	graph.redraw();
 }
 
+function changeCollaborativeGraph(){
+	isCollaborativeGraphToChange = true;
+	recallCollaborativeGraph();
+}
+
+function changeCollaborativeWithBlocksGraph(){
+	isCollaborativeGraphToChange = false;
+	recallCollaborativeGraph();
+}
+
 function recallCollaborativeGraph(){
-	cleanGraph(collaborativeGraphVisulization);
-	cleanGraph(collaborativeWithBlocksGraphVisulization);
+	if (isCollaborativeGraphToChange)
+		cleanGraph(collaborativeGraphVisulization);
+	else
+		cleanGraph(collaborativeWithBlocksGraphVisulization);
 
 	getData();
 }
