@@ -114,11 +114,11 @@ function getQuery(){
 		+'&maxMinersInBlock='+$( "#slider-minersCountInBlock" ).slider( "option", "values" )[1];
 
 	var date_timestamp = new Date($( "#blocksDate" ).val() + " 0:0:0").getTime();
-	var timestamp_mix = $( "#slider-dateTimeBlocks" ).slider( "option", "values" )[0];
-	var timestamp_max = $( "#slider-dateTimeBlocks" ).slider( "option", "values" )[1];
+	var timestamp_min = parseInt( $( "#slider-dateTimeBlocks" ).slider( "option", "values" )[0] );
+	var timestamp_max = parseInt( $( "#slider-dateTimeBlocks" ).slider( "option", "values" )[1] );
 	//calcolare i parametri dello slider
-	var newDate_min = new Date( (date_timestamp + timestamp_min) * 1000);
-	var newDate_max = new Date( (date_timestamp + timestamp_max) * 1000);
+	var newDate_min = new Date(date_timestamp + timestamp_min*1000);
+	var newDate_max = new Date(date_timestamp + timestamp_max*1000);
 	var newTimestamp_min = parseInt(newDate_min.getTime() / 1000);
 	var newTimestamp_max = parseInt(newDate_max.getTime() / 1000);
 

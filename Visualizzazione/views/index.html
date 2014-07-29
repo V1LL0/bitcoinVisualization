@@ -29,12 +29,15 @@
 	<!-- <div id="visualization"></div> -->
 	<div id="statistics"></div>
 	<div id="graphs">
+		<p> Graph1: Collaborative Graph </p>
 		<div id="collaborativeGraph"></div>
+		<p> Graph2: Collaborative Graph With Blocks</p>
 		<div id="collaborativeGraphWithBlocks"></div>
 	</div>
 
 	<div id="filters">
-		<button id="button_ok" onclick=changeCollaborativeGraph()>OK</button>
+		<button onclick=changeCollaborativeGraph()>Change Graph1</button>
+		<button onclick=changeCollaborativeWithBlocksGraph()>Change Graph2</button>
 		<p>
 			<label for="timeStampBlock">Time Stamp Blocco:</label> <input type="text"
 				id="timeStampBlock" readonly
@@ -67,6 +70,17 @@
 		</p>
 
 		<div id="slider-minerCollaborations"></div>
+		<br>	
+		<label for="meeting">Blocks Date : </label>
+		<br>
+		<input id="blocksDate" type="date" value="2012-01-13"/>
+		<p>
+		<label for="dateTimeBlocks">Fascia oraria:</label> <input type="text"
+			id="dateTimeBlocks" readonly
+			style="border: 0; color: #f6931f; font-weight: bold;" size="50">
+		</p>
+		<div id="slider-dateTimeBlocks"></div>
+		<br>
 	</div>
 
 

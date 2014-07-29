@@ -15,7 +15,10 @@ function getValuesFromCacheAndThenStart(){
       miners_in_block_min = parseInt(array_values[4]);
       miners_in_block_max = parseInt(array_values[5]);
       collaborations = parseInt(array_values[6]);
-
+      dateTimeBlocks_min = 2300;//parseInt(array_values[7]);
+      dateTimeBlocks_max = 34000;//parseInt(array_values[8]);
+      
+      
       renderSliders();
       createGraph();
   });
@@ -33,7 +36,7 @@ function renderSliders(){
       //values: [ 1293002065, 1303969665 ],
       values: [ timestamp_min, timestamp_max ],
       slide: function( event, ui ) {
-		    var date1 = new Date(parseInt(ui.values[ 0 ])*1000);
+		var date1 = new Date(parseInt(ui.values[ 0 ])*1000);
         var date2 = new Date(parseInt(ui.values[ 1 ])*1000);
 		
         $( "#timeStampBlock" ).val( date1.getDate()+"/"+(date1.getMonth()+1)+"/"+date1.getFullYear()+"  -  "+date2.getDate()+"/"+(date2.getMonth()+1)+"/"+date2.getFullYear() );
@@ -118,6 +121,38 @@ function renderSliders(){
 	    });
 	    $( "#minerCollaborations" ).val( $( "#slider-minerCollaborations" ).slider( "value" ) );
 	  });
+  
+  
+
+  /* Slider for time, in a day, of the blocks */
+  $(function() {
+	    $( "#slider-dateTimeBlocks" ).slider({
+	      step: 600,
+	      range: true,
+	      min: 0,
+	      max: 86400,
+	      // values: [ 30, 100 ],
+	      values: [ dateTimeBlocks_min, dateTimeBlocks_max ],
+	      slide: function( event, ui ) {
+	    	  var date1 = new Date((parseInt(ui.values[ 0 ])-3600)*1000);
+	          var date2 = new Date((parseInt(ui.values[ 1 ])-3600)*1000);
+	    	  
+	          $( "#dateTimeBlocks" ).val( date1.getHours()+":"+date1.getMinutes() + " - " + date2.getHours()+":"+date2.getMinutes() );
+	      }/* ,
+		  change: function(){
+			  	recallCollaborativeGraph();
+		  }
+	 */    
+	    });
+	      var date1 = new Date(($( "#slider-dateTimeBlocks" ).slider( "values", 0 )-3600)*1000);
+		  var date2 = new Date(($( "#slider-dateTimeBlocks" ).slider( "values", 1 )-3600)*1000);
+		
+        $( "#dateTimeBlocks" ).val( date1.getHours()+":"+date1.getMinutes() + " - " + date2.getHours()+":"+date2.getMinutes() );
+	  });
+  
+  
+  
+  
 }
 
 
