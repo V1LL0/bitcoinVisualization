@@ -64,7 +64,7 @@ var GraphD3Visualization = function(div_name){
 
   var initLayout = function(){
     force = d3.layout.force()
-        .size([width*=15, height*=15])
+        .size([width*=20, height*=20])
         .nodes(nodesList) 
         .linkDistance(50)
         .gravity(0.16)
@@ -93,7 +93,10 @@ var GraphD3Visualization = function(div_name){
         .attr("y2", function(d) { return d.target.y; });
 //per nodi circolari
     node.attr("cx", function(d) { return d.x = Math.max(r, Math.min(width - r, d.x)); })
-    	.attr("cy", function(d) { return d.y = Math.max(r, Math.min(height - r, d.y)); });
+    	.attr("cy", function(d) { 
+        // if (d.color === "green") 
+        //   return height/2;
+        return d.y = Math.max(r, Math.min(height - r, d.y)); });
    // node.attr("cx", function(d) { return d.x; })
    //     .attr("cy", function(d) { return d.y; });
     
@@ -152,7 +155,12 @@ var GraphD3Visualization = function(div_name){
             else selected_node = mousedown_node;
             selected_link = null; 
 
-            console.log("selezionato il nodo " + selected_node['number'] + " " + JSON.stringify(node2Miner[selected_node['number']]))
+            if (d.color === "green"){
+              var date = new Date(parseInt(node2Miner[selected_node['number']] - 3600)*1000); //Creazione della data in GMT+00
+              console.log("selezionata la minata del " + date.toLocaleString())
+            }
+            else 
+              console.log("selezionato il nodo " + selected_node['number'] + " " + JSON.stringify(node2Miner[selected_node['number']]))
 
             //redraw(); 
           })
@@ -218,6 +226,10 @@ var GraphD3Visualization = function(div_name){
 
   this.setNode2Miner = function(dictionary){
     node2Miner = dictionary;
+  }
+
+  this.getSVGHeight = function(){
+    return height;
   }
 
 

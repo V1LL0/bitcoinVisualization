@@ -40,8 +40,11 @@ var edgesList = [];
 var blocksNodesList = [];
 var blocksEdgesList = [];
 
-function addNewNode(list, num, size, color){
-	list.push({'number':num, 'x':100, 'y':100, 'size':size, 'color':color});
+function addNewNode(list, num, x, y, size, color){
+	if (color === "green")
+		list.push({'number':num, 'x':x, 'y':y, 'size':size, 'color':color});
+	else
+		list.push({'number':num, 'x':x, 'y':y, 'size':size, 'color':color});
 }
 
 
@@ -147,8 +150,6 @@ function getData(callback){
 		times = Object.keys(time2CollaborativeMiners);
 
 		setLists();
-
-		console.log(blocksEdgesList[0]);
 		if (isCollaborativeGraphToChange)
 			initGraph(collaborativeGraphVisulization, collaborativeNodes, collaborativeLinks);
 		else
@@ -175,8 +176,8 @@ function setLists(){
 				if (isNewMiner(miner)){
 					collaborativeNode2Miner[num] = miner;
 					miner2collaborativeNode[miner] = num;
-					addNewNode(collaborativeNodes, num, 4, "black");
-					addNewNode(blocksNodesList, num, 20, "red");
+					addNewNode(collaborativeNodes, 100, 100, num, 4, "black");
+					addNewNode(blocksNodesList, num, 100, 100, 20, "red");
 					// addLink(blocksEdgesList, time, num, "black");
 
 					newNodesList.push(num);
@@ -196,20 +197,18 @@ function setLists(){
 		}
 	});
 
-	times.forEach(function(time){
-		addNewNode(blocksNodesList, num, 50, "green");
-		
+	var height = collaborativeWithBlocksGraphVisulization.getSVGHeight();
+
+	times.forEach(function(time){			
 		if (time2CollaborativeMiners[time]['miners'].length > 1){
+			collaborativeNode2Miner[num] = time;
+			miner2collaborativeNode[time] = num;
+			addNewNode(blocksNodesList, num, 100, height/2, 50, "green");
 			time2CollaborativeMiners[time]['miners'].forEach(function(miner){
-				console.log(num);
-				console.log(miner2collaborativeNode[miner]);
 				addLink(blocksEdgesList, num, miner2collaborativeNode[miner], "black");
 			});
+			num++;
 		}
-		num++;
-
-
-
 	});
 
 	drawAllCollaborativeLinks();
@@ -220,7 +219,6 @@ function setLists(){
 function initGraph(graphVisulization, nodes, links){
 	graphVisulization.setNode2Miner(collaborativeNode2Miner);
 	graphVisulization.setNodes(nodes);
-	console.log(links)
 	graphVisulization.setLinks(links);
 	graphVisulization.redraw();
 }
