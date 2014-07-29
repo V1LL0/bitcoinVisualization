@@ -31,8 +31,8 @@ function renderSliders(){
     $( "#slider-timeStampBlock" ).slider({
       step: 2678400,
       range: true,
-      min: 1263969665,
-      max: 1405344382,
+      min: 1231469665,
+      max: 1390205914,
       //values: [ 1293002065, 1303969665 ],
       values: [ timestamp_min, timestamp_max ],
       slide: function( event, ui ) {

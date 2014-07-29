@@ -56,6 +56,9 @@ var GraphD3Visualization = function(div_name){
         // .on("mousedown", removeSelected)
   }
   
+  // var charge=-100000;
+  // var linkDistance = 50;
+  var linkDistance = 50;
   var charge=-100000;
   function removeSelected(){
     console.log("removeSelected");
@@ -66,7 +69,7 @@ var GraphD3Visualization = function(div_name){
     force = d3.layout.force()
         .size([width*=20, height*=20])
         .nodes(nodesList) 
-        .linkDistance(50)
+        .linkDistance(linkDistance)
         .gravity(0.16)
         .charge(charge)
         .on("tick", tick);
