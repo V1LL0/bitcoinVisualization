@@ -72,7 +72,7 @@ var GraphD3Visualization = function(div_name,forceValue,linkDistanceValue){
 
   var initLayout = function(){
     force = d3.layout.force()
-        .size([width*=20, height*=20])
+        .size([width*=15, height*=15])
         .nodes(nodesList) 
         .linkDistance(linkDistance)
         .gravity(0.16)
