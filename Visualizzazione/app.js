@@ -1,4 +1,4 @@
-/**
+/*
  * Module dependencies.
  */
 
@@ -24,6 +24,12 @@ var minMinersInBlock = 30;
 var maxMinersInBlock = 100;
 
 var minCollaborations = 2;
+
+var dateTimeBlocks_min = 2300;
+var dateTimeBlocks_max = 34000;
+var hourTime_min = 2300;
+var hourTime_max = 34000;
+
 var callsCount = 1;
 
 /***************************************************************/
@@ -77,11 +83,21 @@ app.get('/minersInteractionsList', function(req, res) {
 });
 
 app.get('/time2CollaborativeMiners', function(req, res) {
-	if(req.query.minTS && req.query.maxTS && req.query.minMiningCount && req.query.maxMiningCount
+	if(req.query.minMiningCount && req.query.maxMiningCount
 			&& req.query.minMinersInBlock && req.query.maxMinersInBlock){
 		//filtro Time Stamp
-		blockTimeStampMin = parseInt(req.query.minTS);
-		blockTimeStampMax = parseInt(req.query.maxTS);
+		var useTS;
+		if (req.query.minTS){
+			useTS = true;
+			blockTimeStampMin = parseInt(req.query.minTS);
+			blockTimeStampMax = parseInt(req.query.maxTS);
+		} else if (req.query.minTS2){
+			useTS = false;
+			dateTimeBlocks_min = parseInt(req.query.minTS2);
+			dateTimeBlocks_max = parseInt(req.query.maxTS2);
+			hourTime_min = parseInt(req.query.hourMin);
+			hourTime_max = parseInt(req.query.hourMax);
+		}
 
 		//filtro Mining Count
 		minMiningCount = parseInt(req.query.minMiningCount);
@@ -91,7 +107,7 @@ app.get('/time2CollaborativeMiners', function(req, res) {
 		minMinersInBlock = parseInt(req.query.minMinersInBlock);
 		maxMinersInBlock = parseInt(req.query.maxMinersInBlock);
 
-		getCollaborativeMiners(null, dataBase, res);
+		getCollaborativeMiners(null, dataBase, useTS, res);
 
 	}
 	else
@@ -109,7 +125,9 @@ app.get('/getSlidersValues', function(req, res){
 			maxMiningCount + " " +
 			minMinersInBlock + " " +
 			maxMinersInBlock + " " +
-			minCollaborations);
+			minCollaborations + " " +
+			hourTime_min + " " +
+      		hourTime_max);
 });
 
 app.get('/setCollaborationValue/', function(req,res){
@@ -195,22 +213,30 @@ function getMinersInteraction(err, db){ //TODO: da rendere asincrono: http://jus
 
 				})
 			}
-			if (count == 0){
-				console.log("links loaded")
-				getCollaborativeMiners(err, db);
-//				createData(minersDictionary, minersInteractionsDictionary);
+// 			if (count == 0){
+// 				console.log("links loaded")
+// 				getCollaborativeMiners(err, db);
+// //				createData(minersDictionary, minersInteractionsDictionary);
 
-			}
+// 			}
 		});
 	});
 
 }
 
-function getCollaborativeMiners(err, db, res){
+function getCollaborativeMiners(err, db, useTS, res){
 	var resultsLimit = 400000;
 	time2CollaborativeMiners = {};
 	var numberOfMiners = 0;
-	db.collection('transactions').find({"addressesValue_sending":{"$size":0}, "minersCount":{"$gte": minMinersInBlock, "$lte": maxMinersInBlock}, "time":{"$gte": blockTimeStampMin, "$lte": blockTimeStampMax}},{"addressesValue_receving":1, "_id":0, "time":1}).limit(resultsLimit).toArray(function(err, addressesValueReceiving_time_list) {
+	var min, max;
+	if (useTS){
+		min = blockTimeStampMin;
+		max = blockTimeStampMax;	
+	} else {
+		min = dateTimeBlocks_min;
+		max = dateTimeBlocks_max;
+	}
+	db.collection('transactions').find({"addressesValue_sending":{"$size":0}, "minersCount":{"$gte": minMinersInBlock, "$lte": maxMinersInBlock}, "time":{"$gte": min, "$lte": max}},{"addressesValue_receving":1, "_id":0, "time":1}).limit(resultsLimit).toArray(function(err, addressesValueReceiving_time_list) {
 //		 console.log(JSON.stringify(addressesValueReceiving_time_list))
 		async.eachSeries(addressesValueReceiving_time_list, function(addressesValueReceiving_time, callback){
 			var time = addressesValueReceiving_time['time'];

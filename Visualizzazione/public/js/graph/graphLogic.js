@@ -123,12 +123,13 @@ function getQuery(){
 	var newTimestamp_max = parseInt(newDate_max.getTime() / 1000);
 
 	return '/time2CollaborativeMiners'
-			+'?minTS='+ newTimestamp_min
-		+'&maxTS='+newTimestamp_max
+			+'?minTS2='+ newTimestamp_min
+		+'&maxTS2='+newTimestamp_max
 		+'&minMiningCount='+$( "#slider-miningCountAddress" ).slider( "option", "values" )[0]
 		+'&maxMiningCount='+$( "#slider-miningCountAddress" ).slider( "option", "values" )[1]
 		+'&minMinersInBlock='+$( "#slider-minersCountInBlock" ).slider( "option", "values" )[0]
-		+'&maxMinersInBlock='+$( "#slider-minersCountInBlock" ).slider( "option", "values" )[1];
+		+'&maxMinersInBlock='+$( "#slider-minersCountInBlock" ).slider( "option", "values" )[1]
+		+ '&hourMin=' + timestamp_min + '&hourMax=' + timestamp_max;
 }
 
 function getData(callback){
@@ -175,7 +176,7 @@ function setLists(){
 					collaborativeNode2Miner[num] = miner;
 					miner2collaborativeNode[miner] = num;
 					addNewNode(collaborativeNodes, num, 4, "black");
-					addNewNode(blocksNodesList, num, 8, "red");
+					addNewNode(blocksNodesList, num, 20, "red");
 					// addLink(blocksEdgesList, time, num, "black");
 
 					newNodesList.push(num);
@@ -196,7 +197,7 @@ function setLists(){
 	});
 
 	times.forEach(function(time){
-		addNewNode(blocksNodesList, num, 10, "green");
+		addNewNode(blocksNodesList, num, 50, "green");
 		
 		if (time2CollaborativeMiners[time]['miners'].length > 1){
 			time2CollaborativeMiners[time]['miners'].forEach(function(miner){
@@ -274,12 +275,24 @@ function recallCollaborativeGraph(){
 	getData();
 }
 
-function printStatistics(){
-	var statistics = "#Node: " + collaborativeNodes.length + "<br>" +
-		"#Links: " + collaborativeLinks.length;
-	$("#statistics").html("<p>"+statistics+"</p>");
+function printLoading(){
+	if (isCollaborativeGraphToChange){
+		$('#loading1').css('display','block')
+		$("#statistics-graph1").html("<p>/p>");
+	} else {
+		$('#loading2').css('display','block')
+		$("#statistics-graph2").html("<p></p>");
+	}
 }
 
-function printLoading(){
-	$("#statistics").html("<p>Loading...</p>");
+function printStatistics(){
+	if (isCollaborativeGraphToChange){
+		var statistics = "#Node: " + collaborativeNodes.length + "<br>" + "#Links: " + collaborativeLinks.length;
+		$('#loading1').css('display','none')
+		$("#statistics-graph1").html("<p>"+statistics+"</p>");
+	} else {
+		var statistics = "#Node: " + blocksNodesList.length + "<br>" + "#Links: " + blocksEdgesList.length;
+		$('#loading2').css('display','none')
+		$("#statistics-graph2").html("<p>"+statistics+"</p>");
+	}
 }

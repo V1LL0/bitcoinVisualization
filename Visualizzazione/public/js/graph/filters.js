@@ -15,8 +15,8 @@ function getValuesFromCacheAndThenStart(){
       miners_in_block_min = parseInt(array_values[4]);
       miners_in_block_max = parseInt(array_values[5]);
       collaborations = parseInt(array_values[6]);
-      dateTimeBlocks_min = 2300;//parseInt(array_values[7]);
-      dateTimeBlocks_max = 34000;//parseInt(array_values[8]);
+      dateTimeBlocks_min = parseInt(array_values[7]);
+      dateTimeBlocks_max = parseInt(array_values[8]);
       
       
       renderSliders();
