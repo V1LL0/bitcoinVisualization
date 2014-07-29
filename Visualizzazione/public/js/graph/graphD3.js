@@ -1,4 +1,4 @@
-var GraphD3Visualization = function(div_name){
+var GraphD3Visualization = function(div_name,forceValue,linkDistanceValue){
 
   var node2Miner = {};
 
@@ -24,6 +24,9 @@ var GraphD3Visualization = function(div_name){
       node = null,
       link = null;
 
+  var linkDistance = 50;
+  var charge=-100000;
+
 
   this.getForce = function(){ return force;}
 
@@ -45,6 +48,9 @@ var GraphD3Visualization = function(div_name){
       .attr('fill', 'white')
       .attr('stroke', 'black')
       .attr('stroke-width', 3);
+
+    charge = forceValue;
+    linkDistance = linkDistanceValue;
   }
 
   var addInteractionEvents = function(){
@@ -58,8 +64,7 @@ var GraphD3Visualization = function(div_name){
   
   // var charge=-100000;
   // var linkDistance = 50;
-  var linkDistance = 50;
-  var charge=-100000;
+
   function removeSelected(){
     console.log("removeSelected");
     redraw();
@@ -235,5 +240,12 @@ var GraphD3Visualization = function(div_name){
     return height;
   }
 
-
+  this.setForceAndLinkDistance = function(newForceValue, newLinkDistanceValue){
+    charge = newForceValue;
+    linkDistance = newLinkDistanceValue;
+    // initLayout();
+    // completeSVG();
+    // redraw();
+    this.init()
+  }
 }

@@ -31,6 +31,13 @@
 		<p id="loading1" style='display:none'>Loading....</p>
 		<div id="statistics-graph1"></div>
 		<p> Graph1: Collaborative Graph </p>
+		<p> 
+			Modifica la force del grafo 
+			<input id="inputForce" type="number" value="-100000" step="100"> 
+			Modifica la distanza massima tra i link del grafo 
+			<input id="inputLinkDistance" type="number" value="50" step="5"> 
+			<button onclick=setForceAndLinkDistance()>SetValues</button>
+		</p>
 		<div id="collaborativeGraph"></div>
 
 		<p> Graph2: Collaborative Graph With Blocks</p>

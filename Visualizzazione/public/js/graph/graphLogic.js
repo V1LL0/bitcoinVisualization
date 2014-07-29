@@ -225,13 +225,22 @@ function initGraph(graphVisulization, nodes, links){
 
 var collaborativeGraphVisulization;
 var collaborativeWithBlocksGraphVisulization;
+var forceValue = -100000;
+var linkDistanceValue = 50;
 function createGraph(){
-	collaborativeGraphVisulization = new GraphD3Visualization("#collaborativeGraph");
-	collaborativeWithBlocksGraphVisulization = new GraphD3Visualization("#collaborativeGraphWithBlocks");
-	
+	createCollaborativeGraph();
+	createCollaborativeWithBlocksGraphVisulization();
+}
+
+function createCollaborativeGraph(){
+	collaborativeGraphVisulization = new GraphD3Visualization("#collaborativeGraph",forceValue,linkDistanceValue);
 	collaborativeGraphVisulization.init();
+}
+
+function createCollaborativeWithBlocksGraphVisulization(){
+	collaborativeWithBlocksGraphVisulization = new GraphD3Visualization("#collaborativeGraphWithBlocks",forceValue,linkDistanceValue);
 	collaborativeWithBlocksGraphVisulization.init();	
-	// getData();
+	
 }
 
 function cleanGraph(graph){
@@ -293,4 +302,14 @@ function printStatistics(){
 		$('#loading2').css('display','none')
 		$("#statistics-graph2").html("<p>"+statistics+"</p>");
 	}
+}
+
+function setForceAndLinkDistance(){
+	forceValue = parseInt($('#inputForce').val());
+	linkDistanceValue = parseInt($('#inputLinkDistance').val());
+	// collaborativeGraphVisulization.setForceAndLinkDistance(forceValue, linkDistanceValue);
+	$('#collaborativeGraph').children().remove();
+	//$('#collaborativeGraphWithBlocks').children().remove();
+	createCollaborativeGraph();
+	changeCollaborativeGraph();
 }
