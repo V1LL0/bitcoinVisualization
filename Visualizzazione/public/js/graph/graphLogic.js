@@ -225,20 +225,22 @@ function initGraph(graphVisulization, nodes, links){
 
 var collaborativeGraphVisulization;
 var collaborativeWithBlocksGraphVisulization;
-var forceValue = -100000;
-var linkDistanceValue = 50;
+var forceValueGraphC = -100000;
+var linkDistanceValueGraphC = 50;
+var forceValueGraphCWB = -100000;
+var linkDistanceValueGraphCWB = 50;
 function createGraph(){
 	createCollaborativeGraph();
 	createCollaborativeWithBlocksGraphVisulization();
 }
 
 function createCollaborativeGraph(){
-	collaborativeGraphVisulization = new GraphD3Visualization("#collaborativeGraph",forceValue,linkDistanceValue);
+	collaborativeGraphVisulization = new GraphD3Visualization("#collaborativeGraph",forceValueGraphC,linkDistanceValueGraphC);
 	collaborativeGraphVisulization.init();
 }
 
 function createCollaborativeWithBlocksGraphVisulization(){
-	collaborativeWithBlocksGraphVisulization = new GraphD3Visualization("#collaborativeGraphWithBlocks",forceValue,linkDistanceValue);
+	collaborativeWithBlocksGraphVisulization = new GraphD3Visualization("#collaborativeGraphWithBlocks",forceValueGraphCWB,linkDistanceValueGraphCWB);
 	collaborativeWithBlocksGraphVisulization.init();	
 	
 }
@@ -304,12 +306,18 @@ function printStatistics(){
 	}
 }
 
-function setForceAndLinkDistance(){
-	forceValue = parseInt($('#inputForce').val());
-	linkDistanceValue = parseInt($('#inputLinkDistance').val());
-	// collaborativeGraphVisulization.setForceAndLinkDistance(forceValue, linkDistanceValue);
+function setForceAndLinkDistanceGraphCollaborative(){
+	forceValueGraphC = parseInt($('#inputForce').val());
+	linkDistanceValueGraphC = parseInt($('#inputLinkDistance').val());
 	$('#collaborativeGraph').children().remove();
-	//$('#collaborativeGraphWithBlocks').children().remove();
 	createCollaborativeGraph();
 	changeCollaborativeGraph();
+}
+
+function setForceAndLinkDistanceGraphCWB(){
+	forceValueGraphCWB = parseInt($('#inputForce2').val());
+	linkDistanceValueGraphCWB = parseInt($('#inputLinkDistance2').val());
+	$('#collaborativeGraphWithBlocks').children().remove();
+	createCollaborativeWithBlocksGraphVisulization();
+	changeCollaborativeWithBlocksGraph();
 }

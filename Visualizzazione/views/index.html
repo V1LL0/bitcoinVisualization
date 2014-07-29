@@ -28,19 +28,26 @@
 
 	<!-- <div id="visualization"></div> -->
 	<div id="graphs">
-		<p id="loading1" style='display:none'>Loading....</p>
-		<div id="statistics-graph1"></div>
 		<p> Graph1: Collaborative Graph </p>
 		<p> 
 			Modifica la force del grafo 
 			<input id="inputForce" type="number" value="-100000" step="100"> 
 			Modifica la distanza massima tra i link del grafo 
 			<input id="inputLinkDistance" type="number" value="50" step="5"> 
-			<button onclick=setForceAndLinkDistance()>SetValues</button>
+			<button onclick=setForceAndLinkDistanceGraphCollaborative()>SetValues</button>
 		</p>
+		<div id="statistics-graph1"></div>
+		<p id="loading1" style='display:none'>Loading....</p>
 		<div id="collaborativeGraph"></div>
 
 		<p> Graph2: Collaborative Graph With Blocks</p>
+		<p> 
+			Modifica la force del grafo 
+			<input id="inputForce2" type="number" value="-100000" step="100"> 
+			Modifica la distanza massima tra i link del grafo 
+			<input id="inputLinkDistance2" type="number" value="50" step="5"> 
+			<button onclick=setForceAndLinkDistanceGraphCWB()>SetValues</button>
+		</p>
 		<p id="loading2" style='display:none'>Loading....</p>
 		<div id="statistics-graph2"></div>
 		<div id="collaborativeGraphWithBlocks"></div>

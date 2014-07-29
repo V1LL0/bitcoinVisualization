@@ -15,7 +15,7 @@ var async = require('async');
 /**************************** FILTRI ***************************/
 
 var blockTimeStampMin = 1293002065;
-var blockTimeStampMax = 1304145665;
+var blockTimeStampMax = 1306464865;
 
 var minMiningCount = 30;
 var maxMiningCount = 100;

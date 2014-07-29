@@ -33,6 +33,7 @@ function renderSliders(){
       range: true,
       min: 1231469665,
       max: 1390205914,
+      
       //values: [ 1293002065, 1303969665 ],
       values: [ timestamp_min, timestamp_max ],
       slide: function( event, ui ) {
