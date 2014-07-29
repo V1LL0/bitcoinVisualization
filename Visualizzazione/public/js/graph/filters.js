@@ -63,8 +63,8 @@ function renderSliders(){
     $( "#slider-miningCountAddress" ).slider({
       step: 1,
       range: true,
-      min: 0,
-      max: 1000,
+      min: 1,
+      max: 19728,
       // values: [ 30, 100 ],
       values: [ mining_count_min, mining_count_max ],
       slide: function( event, ui ) {
@@ -86,8 +86,8 @@ function renderSliders(){
     $( "#slider-minersCountInBlock" ).slider({
       step: 1,
       range: true,
-      min: 0,
-      max: 1000,
+      min: 1,
+      max: 919,
       // values: [ 30, 100 ],
       values: [ miners_in_block_min, miners_in_block_max ],
       slide: function( event, ui ) {
@@ -107,7 +107,7 @@ function renderSliders(){
 	    $( "#slider-minerCollaborations" ).slider({
 	      step: 1,
 	      min: 1,
-	      max: 1500,
+	      max: 2000,
         // value: 2,
 	      value: collaborations,
 	      slide: function( event, ui ) {

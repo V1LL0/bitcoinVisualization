@@ -6,14 +6,14 @@
 <title>Bitcoin Miners</title>
 <link rel="stylesheet" href="/css/stylesheet.css">
 <link rel="stylesheet" href="/css/bootstrap.css">
-<link rel="stylesheet" href="/css/bootstrap-social.css">
 <link rel="stylesheet" href="/css/font-awesome.css">
 
 <script src="/js/jquery.min.js"></script>
 
-<link rel="stylesheet" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
-  <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
-  <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+<!--<link rel="stylesheet" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">-->
+  <script src="/js/jquery-1.10.2.js"></script>
+  <script src="/js/jquery-ui.js"></script>
+<link rel="stylesheet" href="/css/jquery-ui.css"></script>
  
 
 
@@ -32,7 +32,7 @@
 		<div id="statistics-graph1"></div>
 		<p> Graph1: Collaborative Graph </p>
 		<div id="collaborativeGraph"></div>
-		
+
 		<p> Graph2: Collaborative Graph With Blocks</p>
 		<p id="loading2" style='display:none'>Loading....</p>
 		<div id="statistics-graph2"></div>
@@ -40,8 +40,10 @@
 	</div>
 
 	<div id="filters">
-		<button onclick=changeCollaborativeGraph()>Change Graph1</button>
-		<button onclick=changeCollaborativeWithBlocksGraph()>Change Graph2</button>
+		<button class="btn btn-info btn-large" onclick=changeCollaborativeGraph()>Change Graph1</button>
+		<button class="btn btn-info btn-large" onclick=changeCollaborativeWithBlocksGraph()>Change Graph2</button>
+		<br>
+		<br>
 		<p>
 			<label for="timeStampBlock">Time Stamp Blocco:</label> <input type="text"
 				id="timeStampBlock" readonly
