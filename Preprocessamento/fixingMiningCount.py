@@ -5,6 +5,11 @@ import time
 from bitcoinConverter import BitcoinConverter
 
 
+#Nel preprocessamento, non veniva scritto correttamente il miningCount
+#questo file serve a risistemare il campo mining count dei miners.
+#I nuovi aggiunti dal parser, dovrebbero avere il mining count coerente, poiché il bug è stato risolto successivamente
+#viene comunque lasciato questo file, per sicurezza o per eventuali incorrettezze rimaste.
+
 fileName = 'nextAddressToReadFixing'
 
 def getLastAddress():

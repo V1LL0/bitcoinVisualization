@@ -63,6 +63,12 @@ class BitcoinParser:
 					self.minersAddress.append(address[0])
 					self.dao.insertAddress(address_obj, tx)
 
+
+
+
+#Parte cancellata, serve a raccogliere le altre transazioni (non di mining) effettuate dai miners
+
+
 			# #Le altre transazioni aggiungono informazioni
 			# print "lengBlock"+str(len(block['tx']))
 			# for tx_index in range(1, len(block['tx'])):

@@ -17,11 +17,6 @@ class Dao:
 		self.converter = converter
 		self.db = self.client['bitcoinDB']
 
-		#	DA TOGLIERE A FINE TEST
-		# self.dropDB()
-		# self.db = self.client['bitcoinDB']
-
-
 	def insertAddress(self, address, tx):
 		# self.db.addresses.insert(self.encode_address(address))
 		# self.db.transactions.insert(self.encode_transaction(tx))
@@ -77,9 +72,9 @@ class Dao:
 
 	def insertMining(self, address, mining):
 		self.db.addresses.update({ "_id": address },{ "$addToSet": { "tx_mining": self.encode_transaction(mining)  },
-													  "$inc": { "miningCount": 1 },
 													  "$inc": { "totFees": self.calculateFee(mining) }
 													  })
+		self.db.addresses.update({ "_id": address },{"$inc": { "miningCount": 1 }})
 
 	def insertPayment(self, address, payment):
 		self.db.addresses.update({ "_id": address },{ "$addToSet": { "tx_payment": self.encode_transaction(payment) },

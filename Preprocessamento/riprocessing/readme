@@ -1,0 +1,7 @@
+questa cartella contiene un file che è stato utilizzato per risalvare le transazioni all'interno dei miner in maniera diversa a come era stato pensato in origine.
+
+Questo perché prima le transazioni venivano salvate in maniera completa all'interno dei miner.
+MongoDB ha però un limite per ogni "documento", che in questo modo veniva superato.
+
+Abbiamo quindi salvato all'interno del miner, solo la lista degli id delle transazioni, in modo da tenere i riferimenti.
+Le transazioni vere e proprie sono salvate solo in una collezione distinta. 

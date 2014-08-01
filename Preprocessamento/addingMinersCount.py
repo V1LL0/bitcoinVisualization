@@ -42,10 +42,10 @@ try:
     for i in range(start, maxTransactionsNum):
         try:
             dao.setMinersCount(transactionsList[i])
-            print(str(i)+" scritto")
+            print(str(i)+" WROTE")
             saveTransactionNum(i)
         except (IndexError, KeyError):
-            print(str(i)+" NOOOOOOOOOOOOOOOOOO")
+            print(str(i)+" ERROR")
             saveTransactionNum(i)
 
         
