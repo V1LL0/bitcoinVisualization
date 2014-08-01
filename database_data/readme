@@ -2,7 +2,7 @@ Per inserire i dati in mongo è sufficiente avviare il demone di mongo, tramite:
 
 "mongod"
 
-e poi, dare da terminale, da questa posizione, il comando:
+decomprimere il file in questa posizione e, da questa, dare il comando:
 
 "mongorestore bitcoinDB"
 
