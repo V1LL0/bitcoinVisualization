@@ -73,7 +73,6 @@ http.createServer(app).listen(app.get('port'), function(){
 }); 
 
 
-//router.get(...)
 app.get('/minersList', function(req, res) {
 	res.end(JSON.stringify(minersDictionary));
 });
@@ -167,7 +166,7 @@ var dataBase = "";
 MongoClient.connect("mongodb://localhost:27017/bitcoinDB", initData);
 
 /***************************************************************/
-/*************************   FILTRI   **************************/
+/*************************   FILTERS   **************************/
 /***************************************************************/
 
 function getMinerList(err, db){
@@ -187,8 +186,8 @@ function getMinerList(err, db){
 }
 
 
-//Crea un dizionario in cui memorizza quali minatori hanno pagati altri minatori
-function getMinersInteraction(err, db){ //TODO: da rendere asincrono: http://justinklemm.com/node-js-async-tutorial/
+// This function makes a dictionary in which stores which miners paid other miners
+function getMinersInteraction(err, db){ //TODO: make asynchronous http://justinklemm.com/node-js-async-tutorial/
 	var minersIndexsList = Object.keys(minersDictionary);
 	var minersHashesList = Object.values(minersDictionary);
 	var count = minersIndexsList.length;
@@ -213,12 +212,7 @@ function getMinersInteraction(err, db){ //TODO: da rendere asincrono: http://jus
 
 				})
 			}
-// 			if (count == 0){
-// 				console.log("links loaded")
-// 				getCollaborativeMiners(err, db);
-// //				createData(minersDictionary, minersInteractionsDictionary);
 
-// 			}
 		});
 	});
 
@@ -237,12 +231,12 @@ function getCollaborativeMiners(err, db, useTS, res){
 		max = dateTimeBlocks_max;
 	}
 	db.collection('transactions').find({"addressesValue_sending":{"$size":0}, "minersCount":{"$gte": minMinersInBlock, "$lte": maxMinersInBlock}, "time":{"$gte": min, "$lte": max}},{"addressesValue_receving":1, "_id":0, "time":1}).limit(resultsLimit).toArray(function(err, addressesValueReceiving_time_list) {
-//		 console.log(JSON.stringify(addressesValueReceiving_time_list))
+
 		async.eachSeries(addressesValueReceiving_time_list, function(addressesValueReceiving_time, callback){
 			var time = addressesValueReceiving_time['time'];
 
 			var addressValueReceivingList = addressesValueReceiving_time['addressesValue_receving'];
-//			var listLength = addressValueReceivingList.length;
+
 			
 			var addressesReceivingList = [];
 			addressValueReceivingList.forEach(function(item){
@@ -279,7 +273,7 @@ function getCollaborativeMiners(err, db, useTS, res){
 			if(res!== undefined){
 				res.end(JSON.stringify(time2CollaborativeMiners));
 			}
-			//console.log(JSON.stringify(time2CollaborativeMiners));
+
 			console.log("Miners: "+numberOfMiners);
 			console.log("call number: "+callsCount);
 			callsCount++;
@@ -302,46 +296,3 @@ function initData(err, db){
 
 
 
-
-
-/*
- *//*************** WHEEL ***************//*
-function createData(numberHashMap, hashto_HashList){
-	wheelData={
-			packageNames:[],
-			matrix: []
-	}
-	// console.log(numberHashMap);
-	// console.log(hashto_HashList);
-
-
-	wheelData.packageNames = Object.keys(numberHashMap);
-
-	var row = [];
-
-	wheelData.packageNames.forEach(function(item){
-		row = []
-		wheelData.packageNames.forEach(function(item2){	
-			if (item !== item2){
-				if(hashto_HashList[numberHashMap[item]]===undefined)
-					row.push(0);
-				else
-					if(hashto_HashList[numberHashMap[item]].indexOf(numberHashMap[item2]) > -1)
-						row.push(1);
-					else
-						row.push(0);
-			}
-			else
-				row.push(0);
-
-		});
-
-		wheelData.matrix.push(row);			
-
-	});
-
-	console.log("data wheel loaded")
-
-	console.log("all data loaded")
-}
-  */
